@@ -4,5 +4,5 @@ cmake -S . -B build
 
 cmake --build build
 
-./build/virgo test.vi
+./build/virgo main.vi
 
