@@ -1,5 +1,5 @@
 section .data
-	msg db "8", 0
+	msg db "887", 0
 section .bss
 	length resb 1
 section .text
