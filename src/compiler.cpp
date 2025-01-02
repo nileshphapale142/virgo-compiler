@@ -35,6 +35,10 @@ void Compiler::compile() {
     Scanner scanner;
 
     std::vector<Token> tokens = scanner.scan(this->code);
+    
+    // for (auto tok :tokens) std::cout << tok.tokenTypeToString() << " ";
+
+    // std::cout << std::endl;
 
     Parser parser(tokens);
 

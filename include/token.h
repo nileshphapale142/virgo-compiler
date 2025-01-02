@@ -16,5 +16,5 @@ struct Token {
     TokenType type;
     std::optional<std::string> value;
 
-    static std::string tokenTypeToString(TokenType type);
+    std::string tokenTypeToString();
 };

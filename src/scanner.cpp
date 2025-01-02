@@ -22,7 +22,8 @@ std::vector<Token> Scanner::scan(const std::string &code)
             case ';':
                 tokens.push_back(Token({TokenType::SEMICOLON}));
             break;
-            
+            case ' ':
+            case '\r':
             case '\n':
             case '\t':
             break;

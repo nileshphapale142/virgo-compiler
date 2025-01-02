@@ -8,6 +8,8 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
+
+
 	Compiler compiler(argv[1]);
 	compiler.compile();
 

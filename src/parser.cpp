@@ -1,63 +1,73 @@
 #include "parser.h"
 #include <iostream>
+#include <algorithm>
+#include "../include/parser.h"
+
 
 Parser::Parser(std::vector<Token> tokens) : tokens(tokens) , curr_index(0) {}
 
+NodeProgram Parser::parse() {
 
-P_Rule Parser::parse() {
+	NodeProgram program;
 
-	while (curr_index < tokens.size()) {
-		if (curr_index < tokens.size()) {
-			parseStack.push(tokens.at(curr_index++));
-		}
+	program.stmt_list = parse_stmt_list();
 
-		for (const P_Rule& rule : grammer) {
-			if (is_pr_matches(rule)) {
-				P_Rule p_rule {.lhs = rule.lhs};
-
-				for (size_t i = 0; i < rule.rhs.size(); i ++) {
-					//TODO: add holds alternative
-					const Token token = std::get<Token>(parseStack.top());
-					p_rule.rhs.push_back(token);
-			
-					parseStack.pop();
-				}
-
-				std::reverse(p_rule.rhs.begin(), p_rule.rhs.end());
-
-				parseStack.push(p_rule);
-			}
-		}
-	}
-
-
-	if (parseStack.size() != 1) {
-		std::cerr << "Parsing failed; Incorrect Syntax" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
-	return std::get<P_Rule>(parseStack.top());
+	return program;
 }
 
 
-bool Parser::is_pr_matches(P_Rule rule) {
-	if (parseStack.size() < rule.rhs.size()) return false;
+NodeStmtList Parser::parse_stmt_list() {
+	NodeStmtList stmt_list;
 
-	auto itr = rule.rhs.rbegin();
-
-	std::stack<std::variant<Token, P_Rule>> tempStack = parseStack;
-
-	while (itr != rule.rhs.rend()) {
-		if (std::holds_alternative<Token>(tempStack.top()) &&
-			std::get<Token>(tempStack.top()).type == itr->type) {
-
-			tempStack.pop();
-			++itr;
-		}
-		else {
-			return false;
-		}
+	while (auto stmt = parse_stmt()) {
+		stmt_list.stmts.push_back(stmt.value());
 	}
 
-	return true;
+	if (curr_index < tokens.size())  {
+		std::cerr << "Unknown Syntax" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	return stmt_list;
+}
+
+std::optional<NodeStmt> Parser::parse_stmt() {
+
+	NodeStmt stmt;
+
+	if (auto print_stmt = parse_print()) {
+		stmt.print = print_stmt.value();
+		return stmt;
+	} else {
+		return {};
+	}
+};
+
+
+std::optional<NodePrint> Parser::parse_print() {
+	NodePrint print_node;
+
+	if (curr_index >= tokens.size() || tokens.at(curr_index++).type != TokenType::PRINT) return {};
+	
+	if (curr_index >= tokens.size() || tokens.at(curr_index++).type != TokenType::LEFT_PAREN) {
+		std::cerr << "Missing '(' " << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (tokens.at(curr_index).type == TokenType::INTEGER) {
+		print_node.node = TerminalNode {.token = tokens.at(curr_index++) };
+	}
+	
+	
+	if (curr_index >= tokens.size() || tokens.at(curr_index++).type != TokenType::RIGHT_PAREN) {
+		std::cerr << "Missing ')'" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	if (curr_index >= tokens.size() || tokens.at(curr_index++).type != TokenType::SEMICOLON) {
+		std::cerr << "Missing ';'" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	return  print_node;
 }
