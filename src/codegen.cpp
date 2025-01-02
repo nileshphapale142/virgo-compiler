@@ -45,7 +45,11 @@ void CodeGenerator::collect_section_data(NodeStmtList stmt_list) {
 
 	for (auto& stmt : stmt_list.stmts) {
 		++label_cnt;
-		output_code << "	msg_" << label_cnt << " db \"" << stmt.print.node.value().token.value.value_or("") << "\", 0\n";
+		std::string value = stmt.print.node.has_value() ? 
+								stmt.print.node.value().token.value.value_or("") : 
+								"";
+
+		output_code << "	msg_" << label_cnt << " db \"" << value << "\", 0\n";
 	}
 }
 
@@ -54,7 +58,7 @@ void CodeGenerator::collect_section_bss(NodeStmtList stmt_list) {
 	
 	for (auto stmt : stmt_list.stmts) {
 		++label_cnt;
-		output_code << "	length_" << label_cnt << " resb 1\n";
+		output_code << "	length_" << label_cnt << " resb 1\n"; //todo: 1 byte length variable
 	}
 }
 

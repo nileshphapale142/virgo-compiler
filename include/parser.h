@@ -1,43 +1,8 @@
 #pragma once
 
-#include <vector>
-#include <optional>
-#include <stack>
-#include <variant>
+#include "node.h"
 #include "token.h"
 
-
-struct NodeProgram;
-struct NodeStmtList;
-struct NodeStmt;
-struct TerminalNode;
-struct NonTerminalNode;
-struct NodePrint;
-
-struct TerminalNode {
-    Token token;
-};
-
-// struct NonTerminalNode {
-//     P_Name name;
-//     std::vector<std::variant<TerminalNode, NonTerminalNode>> child;
-// };
-
-struct NodePrint {
-    std::optional<TerminalNode> node;
-};
-
-struct NodeStmt {
-    NodePrint print;
-};
-
-struct NodeStmtList {
-    std::vector<NodeStmt> stmts;
-};
-
-struct NodeProgram {
-    NodeStmtList stmt_list;
-};
 
 class Parser {
 public:
@@ -51,4 +16,6 @@ private:
     NodeStmtList parse_stmt_list(); 
     std::optional<NodeStmt> parse_stmt();
     std::optional<NodePrint> parse_print();
+    std::optional<Token> peek();
+    std::optional<Token> consume();
 };

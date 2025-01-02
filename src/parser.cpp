@@ -23,7 +23,7 @@ NodeStmtList Parser::parse_stmt_list() {
 		stmt_list.stmts.push_back(stmt.value());
 	}
 
-	if (curr_index < tokens.size())  {
+	if (peek().has_value()) {
 		std::cerr << "Unknown Syntax" << std::endl;
 		exit(EXIT_FAILURE);
 	}
@@ -47,27 +47,47 @@ std::optional<NodeStmt> Parser::parse_stmt() {
 std::optional<NodePrint> Parser::parse_print() {
 	NodePrint print_node;
 
-	if (curr_index >= tokens.size() || tokens.at(curr_index++).type != TokenType::PRINT) return {};
+	if (!peek().has_value() || peek().value().type != TokenType::PRINT) return std::nullopt;
+
+	consume();
 	
-	if (curr_index >= tokens.size() || tokens.at(curr_index++).type != TokenType::LEFT_PAREN) {
+	if (!peek().has_value() || peek().value().type != TokenType::LEFT_PAREN) {
 		std::cerr << "Missing '(' " << std::endl;
 		exit(EXIT_FAILURE);
 	}
+
+	consume();
 	
-	if (tokens.at(curr_index).type == TokenType::INTEGER) {
-		print_node.node = TerminalNode {.token = tokens.at(curr_index++) };
+	if (peek().has_value() && peek().value().type == TokenType::INTEGER) {
+		print_node.node = TerminalNode {.token = consume().value()};
 	}
 	
 	
-	if (curr_index >= tokens.size() || tokens.at(curr_index++).type != TokenType::RIGHT_PAREN) {
+	if (!peek().has_value() || peek().value().type != TokenType::RIGHT_PAREN) {
 		std::cerr << "Missing ')'" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
-	if (curr_index >= tokens.size() || tokens.at(curr_index++).type != TokenType::SEMICOLON) {
+
+	consume();
+
+	if (!peek().has_value() || peek().value().type != TokenType::SEMICOLON) {
 		std::cerr << "Missing ';'" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
+	consume();
+
 	return  print_node;
+}
+
+
+std::optional<Token> Parser::peek() {
+	if (curr_index < tokens.size()) return tokens.at(curr_index);
+	return std::nullopt;
+}
+
+std::optional<Token> Parser::consume() {
+	if (peek().has_value()) return tokens.at(curr_index++);
+	return std::nullopt;
 }
