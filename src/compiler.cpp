@@ -32,13 +32,9 @@ Compiler::Compiler(const std::string &filename) {
 }
 
 void Compiler::compile() {
-    Scanner scanner;
+    Scanner scanner(this->code);
 
-    std::vector<Token> tokens = scanner.scan(this->code);
-    
-    // for (auto tok :tokens) std::cout << tok.tokenTypeToString() << " ";
-
-    // std::cout << std::endl;
+    std::vector<Token> tokens = scanner.scan();
 
     Parser parser(tokens);
 
@@ -48,7 +44,7 @@ void Compiler::compile() {
 
     std::string assembly_code = generator.generate();
 
-    std::ofstream file("test/" + filename + ".asm");
+    std::ofstream file("temp/" + filename + ".asm");
 
     if (!file.is_open()) {
         std::cerr << "Unable to create file" << std::endl;
@@ -60,8 +56,8 @@ void Compiler::compile() {
     file.close();
 
 
-    std::string nasm_cmd = "nasm -f elf64 -o ./test/" + filename + ".o ./test/" + filename + ".asm";
-    std::string ld_cmd = "ld -o " + filename + " ./test/" + filename + ".o";
+    std::string nasm_cmd = "nasm -f elf64 -o ./temp/" + filename + ".o ./temp/" + filename + ".asm";
+    std::string ld_cmd = "ld -o " + filename + " ./temp/" + filename + ".o";
     
     system(nasm_cmd.c_str());
     system(ld_cmd.c_str());

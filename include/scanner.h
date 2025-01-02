@@ -6,6 +6,12 @@
 
 class Scanner {
     public:
-        Scanner();
-        std::vector<Token> scan(const std::string &code);
+        Scanner(const std::string &code);
+        std::vector<Token> scan();
+    private:
+        std::optional<char> peek();
+        std::optional<char> consume();
+        
+        int curr_index;
+        std::string code; 
 };
