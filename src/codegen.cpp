@@ -1,7 +1,7 @@
 #include "codegen.h"
 #include <iostream>
 
-CodeGenerator::CodeGenerator(NodeProgram root) 
+CodeGenerator::CodeGenerator(NodeProgram root)  
 : root(root), label_cnt(0) {}
 
 std::string CodeGenerator::generate() {
