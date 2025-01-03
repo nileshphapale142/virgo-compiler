@@ -1,5 +1,5 @@
 section .data
-	msg_1 db "", 0
+	msg_1 db "00000", 0
 	msg_2 db "543", 0
 section .bss
 	length_1 resb 1

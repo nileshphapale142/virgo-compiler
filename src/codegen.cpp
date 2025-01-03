@@ -45,9 +45,7 @@ void CodeGenerator::collect_section_data(NodeStmtList stmt_list) {
 
 	for (auto& stmt : stmt_list.stmts) {
 		++label_cnt;
-		std::string value = stmt.print.node.has_value() ? 
-								stmt.print.node.value().token.value.value_or("") : 
-								"";
+		std::string value = stmt.print.expr.term.u_int.value.value_or("");
 
 		output_code << "	msg_" << label_cnt << " db \"" << value << "\", 0\n";
 	}

@@ -4,13 +4,17 @@
 #include <optional>
 #include "token.h"
 
-
-struct TerminalNode {
-    Token token;
+struct NodeTerm {
+    Token u_int;
 };
 
+struct NodeExpr {
+    NodeTerm term;
+};
+
+
 struct NodePrint {
-    std::optional<TerminalNode> node;
+    NodeExpr expr;
 };
 
 struct NodeStmt {

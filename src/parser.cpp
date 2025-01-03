@@ -58,10 +58,7 @@ std::optional<NodePrint> Parser::parse_print() {
 
 	consume();
 	
-	if (peek().has_value() && peek().value().type == TokenType::INTEGER) {
-		print_node.node = TerminalNode {.token = consume().value()};
-	}
-	
+	print_node.expr = parse_expr();
 	
 	if (!peek().has_value() || peek().value().type != TokenType::RIGHT_PAREN) {
 		std::cerr << "Missing ')'" << std::endl;
@@ -81,6 +78,27 @@ std::optional<NodePrint> Parser::parse_print() {
 	return  print_node;
 }
 
+
+NodeExpr Parser::parse_expr() {
+	NodeExpr expr;
+
+	expr.term = parse_term();
+
+	return expr;
+}
+
+
+NodeTerm Parser::parse_term() {
+	NodeTerm term;
+
+	if (peek().has_value() && peek().value().type == TokenType::INTEGER) {
+		term.u_int = consume().value();
+	} else {
+		std::cerr << "Expected an unsigned integer" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+	return term;
+}
 
 std::optional<Token> Parser::peek() {
 	if (curr_index < tokens.size()) return tokens.at(curr_index);
