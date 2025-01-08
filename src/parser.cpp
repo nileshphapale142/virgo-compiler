@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "include/parser.h"
 #include <iostream>
 
 
@@ -78,22 +79,28 @@ std::optional<NodePrint> Parser::parse_print() {
 NodeExpr Parser::parse_expr() {
 	NodeExpr expr;
 
-	expr.term = parse_term();
+	while (const auto &term = parse_term()) {
+		expr.term.push_back(term.value());
+		if (!peek().has_value() || peek().value().type != TokenType::PLUS) break;
+		consume();
+	}
 
 	return expr;
 }
 
 
-NodeTerm Parser::parse_term() {
-	NodeTerm term;
+std::optional<NodeTerm> Parser::parse_term() {
 
 	if (peek().has_value() && peek().value().type == TokenType::INTEGER) {
-		term.u_int = consume().value();
+		NodeTerm term;
+		term.u_int_lit = consume().value();
+		return term;
 	} else {
 		std::cerr << "Expected an unsigned integer" << std::endl;
 		exit(EXIT_FAILURE);
 	}
-	return term;
+
+	return std::nullopt;
 }
 
 std::optional<Token> Parser::peek() {

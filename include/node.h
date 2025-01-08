@@ -4,11 +4,11 @@
 #include "token.h"
 
 struct NodeTerm {
-    Token u_int;
+    Token u_int_lit;
 };
 
 struct NodeExpr {
-    NodeTerm term;
+    std::vector<NodeTerm> term;
 };
 
 

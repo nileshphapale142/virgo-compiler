@@ -17,7 +17,7 @@ private:
     std::optional<NodeStmt> parse_stmt();
     std::optional<NodePrint> parse_print();
     NodeExpr parse_expr();
-    NodeTerm parse_term();
+    std::optional<NodeTerm> parse_term();
     std::optional<Token> peek();
     std::optional<Token> consume();
 };
