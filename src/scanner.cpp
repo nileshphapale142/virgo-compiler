@@ -21,6 +21,9 @@ std::vector<Token> Scanner::scan() {
             case ';':
                 tokens.push_back(Token({TokenType::SEMICOLON}));
             break;
+            case '+':
+                tokens.push_back(Token({TokenType::PLUS}));
+            break;
             case ' ':
             case '\r':
             case '\n':
