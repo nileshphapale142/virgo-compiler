@@ -6,15 +6,15 @@
 
 class CodeGenerator {
 	public:
-		CodeGenerator(NodeProgram root);
+		explicit CodeGenerator(NodeProgram root);
 		std::string generate();
 	private:
 
-		void generate_print_code(NodePrint node);
-		void handle_stmt_list(NodeStmtList stmt_list);
-		void handle_stmt(NodeStmt stmt);
-		void collect_section_data(NodeStmtList stmt_list);
-		void collect_section_bss(NodeStmtList stmt_list);
+		void generate_print_code(const NodePrint& node);
+		void handle_stmt_list(const NodeStmtList& stmt_list);
+		void handle_stmt(const NodeStmt &stmt);
+		void collect_section_data(const NodeStmtList &stmt_list);
+		void collect_section_bss(const NodeStmtList &stmt_list);
 		
 		NodeProgram root;
 		std::stringstream output_code;

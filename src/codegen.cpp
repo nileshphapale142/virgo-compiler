@@ -2,7 +2,7 @@
 #include <iostream>
 
 CodeGenerator::CodeGenerator(NodeProgram root)  
-: root(root), label_cnt(0) {}
+: root(std::move(root)), label_cnt(0) {}
 
 std::string CodeGenerator::generate() {
 
@@ -28,30 +28,30 @@ std::string CodeGenerator::generate() {
 	return output_code.str();
 }
 
-void CodeGenerator::handle_stmt_list(NodeStmtList stmt_list) {
-	for (auto stmt : stmt_list.stmts) {
+void CodeGenerator::handle_stmt_list(const NodeStmtList &stmt_list) {
+	for (const auto &stmt : stmt_list.stmts) {
 		handle_stmt(stmt);
 	}
 } 
 
 
-void CodeGenerator::handle_stmt(NodeStmt stmt) {
+void CodeGenerator::handle_stmt(const NodeStmt &stmt) {
 	generate_print_code(stmt.print);
 }
 
 
-void CodeGenerator::collect_section_data(NodeStmtList stmt_list) {
+void CodeGenerator::collect_section_data(const NodeStmtList &stmt_list) {
 	label_cnt = 0;
 
-	for (auto& stmt : stmt_list.stmts) {
+	for (const auto& [print] : stmt_list.stmts) {
 		++label_cnt;
-		std::string value = stmt.print.expr.term.u_int.value.value_or("");
+		std::string value = print.expr.term.u_int.value.value_or("");
 
 		output_code << "	msg_" << label_cnt << " db \"" << value << "\", 0\n";
 	}
 }
 
-void CodeGenerator::collect_section_bss(NodeStmtList stmt_list) {
+void CodeGenerator::collect_section_bss(const NodeStmtList &stmt_list) {
 	label_cnt = 0;
 	
 	for (auto stmt : stmt_list.stmts) {
@@ -62,7 +62,7 @@ void CodeGenerator::collect_section_bss(NodeStmtList stmt_list) {
 
 
 
-void CodeGenerator::generate_print_code(NodePrint print_node) {
+void CodeGenerator::generate_print_code(const NodePrint& print_node) {
 	++label_cnt;
 
 	output_code << "	mov rsi, msg_"  << label_cnt << "\n";

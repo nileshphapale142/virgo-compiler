@@ -1,17 +1,16 @@
 #include <iostream>
 #include "compiler.h"
 
-int main(int argc, char *argv[])
+int main(const int argc, char *argv[])
 {
 	if (argc != 2) {
 		std::cerr << "Incorrect arguments\nShould use \"virgo <filename>.vi\"" << std::endl;
-		return 0;
+		return EXIT_FAILURE;
 	}
 
 
-
-	Compiler compiler(argv[1]);
+	const Compiler compiler(argv[1]);
 	compiler.compile();
 
-	return 0;
+	return EXIT_SUCCESS;
 }

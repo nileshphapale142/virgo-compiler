@@ -6,7 +6,7 @@
 
 class Parser {
 public:
-    Parser(std::vector<Token> tokens);
+    explicit Parser(std::vector<Token> &tokens);
     NodeProgram parse();
 
 private:

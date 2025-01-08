@@ -28,10 +28,9 @@ Compiler::Compiler(const std::string &filename) {
     buffer << file.rdbuf();
     this->code = buffer.str();
 
-    return;
 }
 
-void Compiler::compile() {
+void Compiler::compile() const {
     Scanner scanner(this->code);
 
     std::vector<Token> tokens = scanner.scan();
@@ -62,5 +61,4 @@ void Compiler::compile() {
     system(nasm_cmd.c_str());
     system(ld_cmd.c_str());
 
-    return;
 }

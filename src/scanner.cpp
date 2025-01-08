@@ -1,16 +1,15 @@
 #include "scanner.h"
 #include <iostream>
 
-Scanner::Scanner(const std::string &code) 
-: code(code), curr_index(0) {}
+Scanner::Scanner(std::string code)
+: code(std::move(code)), curr_index(0) {}
 
 std::vector<Token> Scanner::scan() {
     std::vector<Token> tokens;
 
     while (peek().has_value()) {
-        char c = consume().value();
 
-        switch(c) {
+        switch(const char c = consume().value()) {
             case '(':
                 tokens.push_back(Token{TokenType::LEFT_PAREN});
             break;

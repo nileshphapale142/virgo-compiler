@@ -1,10 +1,8 @@
 #include "parser.h"
 #include <iostream>
-#include <algorithm>
-#include "../include/parser.h"
 
 
-Parser::Parser(std::vector<Token> tokens) : tokens(tokens) , curr_index(0) {}
+Parser::Parser(std::vector<Token> &tokens) : tokens(std::move(tokens)) , curr_index(0) {}
 
 NodeProgram Parser::parse() {
 
@@ -32,15 +30,13 @@ NodeStmtList Parser::parse_stmt_list() {
 }
 
 std::optional<NodeStmt> Parser::parse_stmt() {
-
-	NodeStmt stmt;
-
 	if (auto print_stmt = parse_print()) {
+		NodeStmt stmt;
 		stmt.print = print_stmt.value();
 		return stmt;
-	} else {
-		return {};
 	}
+
+	return std::nullopt;
 };
 
 

@@ -16,5 +16,5 @@ struct Token {
     TokenType type;
     std::optional<std::string> value;
 
-    std::string tokenTypeToString();
+    [[nodiscard]] std::string tokenTypeToString() const;
 };

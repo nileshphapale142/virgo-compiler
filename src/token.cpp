@@ -1,6 +1,6 @@
 #include "token.h"
 
-std::string Token::tokenTypeToString() {
+std::string Token::tokenTypeToString() const {
     switch (type) {
     case TokenType::LEFT_PAREN:
         return "LEFT_PAREN";

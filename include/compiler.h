@@ -4,8 +4,8 @@
 
 class Compiler {
 public:
-    Compiler(const std::string &filename);
-    void compile();
+    explicit Compiler(const std::string &filename);
+    void compile() const;
 
 private:
     std::string code;
