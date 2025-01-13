@@ -103,9 +103,23 @@ void CodeGenerator::handle_print(const NodePrint& print_node) {
 
 void CodeGenerator::handle_expr(const NodeExpr &expr) {
 	output_code.start << "	mov rax, 0\n";
+	std::string operation = "add";
 
-	for (const auto &[u_int_lit] : expr.term) {
-		output_code.start << "	add rax, " << u_int_lit.value.value_or("0") << "\n";		
+	for (const auto &val : expr.val_list) {	
+		if (std::holds_alternative<NodeTerm>(val)) {
+			const NodeTerm term = std::get<NodeTerm>(val);
+			output_code.start << "\t" <<  operation << " rax, " << term.u_int_lit.value.value_or("0") << "\n";		
+		} else if (std::holds_alternative<Token>(val)) {
+			Token token = std::get<Token>(val);
+			
+			if (token.type != TokenType::PLUS && token.type != TokenType::MINUS) {
+				std::cerr << "Unexpected token" << std::endl;
+				exit(EXIT_FAILURE);
+			}
+
+			if (token.type == TokenType::PLUS) operation = "add";
+			else if (token.type == TokenType::MINUS) operation = "sub";
+		}
 	}
 }
 

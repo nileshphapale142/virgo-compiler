@@ -80,9 +80,13 @@ NodeExpr Parser::parse_expr() {
 	NodeExpr expr;
 
 	while (const auto &term = parse_term()) {
-		expr.term.push_back(term.value());
-		if (!peek().has_value() || peek().value().type != TokenType::PLUS) break;
-		consume();
+		expr.val_list.push_back(term.value());
+
+		if (!peek().has_value() || (
+			peek().value().type != TokenType::PLUS &&
+			peek().value().type != TokenType::MINUS)) break;
+		
+		expr.val_list.push_back(consume().value());
 	}
 
 	return expr;

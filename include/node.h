@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <variant>
 #include "token.h"
 
 struct NodeTerm {
@@ -8,7 +9,7 @@ struct NodeTerm {
 };
 
 struct NodeExpr {
-    std::vector<NodeTerm> term;
+    std::vector<std::variant<NodeTerm, Token>> val_list;
 };
 
 

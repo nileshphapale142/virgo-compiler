@@ -5,32 +5,8 @@ section .text
 _start:
 	mov rax, 0
 	add rax, 543
-	add rax, 123
-	lea rdi, [print_str + 19]
-	mov r8, rdi
-	call itoa
-	mov rdx, r8
-	sub rdx, rdi
-	inc rdx
-	mov rax, 1
-	mov rsi, rdi
-	mov rdi, 1
-	syscall
-	mov rax, 0
-	add rax, 2342
-	lea rdi, [print_str + 19]
-	mov r8, rdi
-	call itoa
-	mov rdx, r8
-	sub rdx, rdi
-	inc rdx
-	mov rax, 1
-	mov rsi, rdi
-	mov rdi, 1
-	syscall
-	mov rax, 0
-	add rax, 123
-	add rax, 134
+	sub rax, 123
+	add rax, 10
 	lea rdi, [print_str + 19]
 	mov r8, rdi
 	call itoa
