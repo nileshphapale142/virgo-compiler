@@ -98,11 +98,13 @@ std::optional<NodeFactor> Parser::parse_factor() {
 	NodeFactor factor;
 
 	while (const auto& term = parse_term()) {
-		factor.terms.push_back(term.value());
+		factor.val_list.push_back(term.value());
 
-		if (!peek().has_value() || peek().value().type != TokenType::STAR) break;
+		if (!peek().has_value() || (
+			peek().value().type != TokenType::STAR && 
+			peek().value().type != TokenType::BACKWARD_SLASH)) break;
 
-		consume();
+		factor.val_list.push_back(consume().value());
 	}
 
 	return factor;

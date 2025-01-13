@@ -9,7 +9,7 @@ struct NodeTerm {
 };
 
 struct NodeFactor {
-    std::vector<NodeTerm> terms;
+    std::vector<std::variant<NodeTerm, Token>> val_list;
 };
 
 struct NodeExpr {
