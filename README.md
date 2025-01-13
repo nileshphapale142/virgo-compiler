@@ -11,7 +11,7 @@ $$
     \langle stmt \rangle & ::= & \langle print \rangle \\
     \langle print \rangle & ::= & \text{print}(\langle expr \rangle); \\
     \langle expr \rangle & ::= & \langle factor \rangle  \space | \space \langle factor \rangle \space + \space \langle expr \rangle \space | \space \langle factor \rangle \space - \space \langle expr \rangle \\
-    \langle factor \rangle & :== & \langle term \rangle \space | \space \langle term \rangle \space * \space  \langle factor \rangle  \space | \space \langle term \rangle \space / \space \langle factor \rangle  \\
+    \langle factor \rangle & ::= & \langle term \rangle \space | \space \langle term \rangle \space * \space  \langle factor \rangle  \space | \space \langle term \rangle \space / \space \langle factor \rangle  \\
     \langle term \rangle & ::= & \space UNSIGNED\_INTEGER\_LITERAL
 \end{array}
 $$
@@ -48,7 +48,7 @@ Follow these steps to compile and execute your program:
 
     If you're working from the project root directory, the path to the Virgo executable will be:
     ```bash
-    build/virgo <filename.vi>
+ u:=ld/virgo <filename.vi>
     ```
  
 
