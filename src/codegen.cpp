@@ -106,9 +106,15 @@ void CodeGenerator::handle_expr(const NodeExpr &expr) {
 	std::string operation = "add";
 
 	for (const auto &val : expr.val_list) {	
-		if (std::holds_alternative<NodeTerm>(val)) {
-			const NodeTerm term = std::get<NodeTerm>(val);
-			output_code.start << "\t" <<  operation << " rax, " << term.u_int_lit.value.value_or("0") << "\n";		
+
+		if (std::holds_alternative<NodeFactor>(val)) {
+
+			const NodeFactor factor = std::get<NodeFactor>(val);
+			
+			handle_factor(factor);
+
+			output_code.start << "\t" <<  operation << " rax, rbx\n";
+
 		} else if (std::holds_alternative<Token>(val)) {
 			Token token = std::get<Token>(val);
 			
@@ -122,6 +128,17 @@ void CodeGenerator::handle_expr(const NodeExpr &expr) {
 		}
 	}
 }
+
+
+void CodeGenerator::handle_factor(const NodeFactor& factor) {
+	if (!factor.term.u_int_lit.value.has_value()) {
+		std::cerr << "Exptected a value in term" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	output_code.start << "	mov rbx, "<< factor.term.u_int_lit.value.value() << "\n";
+}
+
 
 void CodeGenerator::add_exit_code() {
 	// output_code.start << "exit:\n";

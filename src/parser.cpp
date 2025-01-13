@@ -79,17 +79,33 @@ std::optional<NodePrint> Parser::parse_print() {
 NodeExpr Parser::parse_expr() {
 	NodeExpr expr;
 
-	while (const auto &term = parse_term()) {
-		expr.val_list.push_back(term.value());
+	while (const auto &factor = parse_factor()) {
+		expr.val_list.push_back(factor.value());
 
 		if (!peek().has_value() || (
 			peek().value().type != TokenType::PLUS &&
 			peek().value().type != TokenType::MINUS)) break;
 		
 		expr.val_list.push_back(consume().value());
+
 	}
 
 	return expr;
+}
+
+
+std::optional<NodeFactor> Parser::parse_factor() {
+
+	if (const auto& term = parse_term()) {
+		NodeFactor factor;
+		factor.term = term.value();
+
+		return factor;
+	}
+
+
+	return std::nullopt;
+	
 }
 
 

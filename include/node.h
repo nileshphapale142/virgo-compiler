@@ -8,8 +8,12 @@ struct NodeTerm {
     Token u_int_lit;
 };
 
+struct NodeFactor {
+    NodeTerm term;
+};
+
 struct NodeExpr {
-    std::vector<std::variant<NodeTerm, Token>> val_list;
+    std::vector<std::variant<NodeFactor, Token>> val_list;
 };
 
 

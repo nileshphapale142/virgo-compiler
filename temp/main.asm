@@ -4,9 +4,12 @@ section .text
 	global _start
 _start:
 	mov rax, 0
-	add rax, 543
-	sub rax, 123
-	add rax, 10
+	mov rbx, 543
+	add rax, rbx
+	mov rbx, 123
+	sub rax, rbx
+	mov rbx, 10
+	add rax, rbx
 	lea rdi, [print_str + 19]
 	mov r8, rdi
 	call itoa

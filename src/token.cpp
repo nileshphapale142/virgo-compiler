@@ -12,6 +12,10 @@ std::string Token::tokenTypeToString() const {
         return "INTEGER";
     case TokenType::PRINT:
         return "PRINT";
+    case TokenType::PLUS:
+        return "PLUS";
+    case TokenType::MINUS:
+        return "MINUS";
     default:
         return "UNKNOWN";
     }
