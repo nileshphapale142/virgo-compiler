@@ -33,6 +33,10 @@ std::vector<Token> Scanner::scan() {
             case '*':
                 tokens.push_back(Token({TokenType::STAR}));
             break;
+
+            case '/':
+                tokens.push_back(Token({TokenType::BACKWARD_SLASH}));
+            break;
             
             case ' ':
             case '\r':
