@@ -95,17 +95,17 @@ NodeExpr Parser::parse_expr() {
 
 
 std::optional<NodeFactor> Parser::parse_factor() {
+	NodeFactor factor;
 
-	if (const auto& term = parse_term()) {
-		NodeFactor factor;
-		factor.term = term.value();
+	while (const auto& term = parse_term()) {
+		factor.terms.push_back(term.value());
 
-		return factor;
+		if (!peek().has_value() || peek().value().type != TokenType::STAR) break;
+
+		consume();
 	}
 
-
-	return std::nullopt;
-	
+	return factor;
 }
 
 

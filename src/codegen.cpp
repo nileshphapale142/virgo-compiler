@@ -131,12 +131,17 @@ void CodeGenerator::handle_expr(const NodeExpr &expr) {
 
 
 void CodeGenerator::handle_factor(const NodeFactor& factor) {
-	if (!factor.term.u_int_lit.value.has_value()) {
-		std::cerr << "Exptected a value in term" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	output_code.start << "	mov rbx, 1\n";
 
-	output_code.start << "	mov rbx, "<< factor.term.u_int_lit.value.value() << "\n";
+	for (const auto& term : factor.terms) {
+		if (!term.u_int_lit.value.has_value()) {
+			std::cerr << "Expected an unsigned integer" << std::endl;
+			exit(EXIT_FAILURE);
+		}
+
+		output_code.start << "	mov rcx, " << term.u_int_lit.value.value() << "\n";
+		output_code.start << "	imul rbx, rcx\n";
+	}
 }
 
 

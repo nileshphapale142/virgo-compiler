@@ -4,11 +4,38 @@ section .text
 	global _start
 _start:
 	mov rax, 0
-	mov rbx, 543
+	mov rbx, 1
+	mov rcx, 543
+	imul rbx, rcx
 	add rax, rbx
-	mov rbx, 123
+	mov rbx, 1
+	mov rcx, 123
+	imul rbx, rcx
 	sub rax, rbx
-	mov rbx, 10
+	mov rbx, 1
+	mov rcx, 10
+	imul rbx, rcx
+	mov rcx, 100
+	imul rbx, rcx
+	mov rcx, 10
+	imul rbx, rcx
+	add rax, rbx
+	lea rdi, [print_str + 19]
+	mov r8, rdi
+	call itoa
+	mov rdx, r8
+	sub rdx, rdi
+	inc rdx
+	mov rax, 1
+	mov rsi, rdi
+	mov rdi, 1
+	syscall
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 130
+	imul rbx, rcx
+	mov rcx, 10
+	imul rbx, rcx
 	add rax, rbx
 	lea rdi, [print_str + 19]
 	mov r8, rdi

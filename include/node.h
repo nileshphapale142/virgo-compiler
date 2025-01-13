@@ -9,7 +9,7 @@ struct NodeTerm {
 };
 
 struct NodeFactor {
-    NodeTerm term;
+    std::vector<NodeTerm> terms;
 };
 
 struct NodeExpr {

@@ -29,6 +29,10 @@ std::vector<Token> Scanner::scan() {
             case '-':
                 tokens.push_back(Token({TokenType::MINUS}));
             break;
+
+            case '*':
+                tokens.push_back(Token({TokenType::STAR}));
+            break;
             
             case ' ':
             case '\r':
