@@ -126,21 +126,41 @@ void CodeGenerator::handle_expr(const NodeExpr &expr) {
 			if (token.type == TokenType::PLUS) operation = "add";
 			else if (token.type == TokenType::MINUS) operation = "sub";
 		}
+		//todo: else error throw
 	}
 }
 
 
 void CodeGenerator::handle_factor(const NodeFactor& factor) {
 	output_code.start << "	mov rbx, 1\n";
+	bool is_mul = true;
 
-	for (const auto& term : factor.terms) {
-		if (!term.u_int_lit.value.has_value()) {
-			std::cerr << "Expected an unsigned integer" << std::endl;
-			exit(EXIT_FAILURE);
+	for (const auto& val : factor.val_list) {
+
+		if (std::holds_alternative<NodeTerm>(val)) {
+			const NodeTerm term = std::get<NodeTerm>(val);
+			//todo: in case term.u_int_lit.value does not cotain value error
+
+			if (is_mul) {
+				output_code.start << "	mov rcx, " << term.u_int_lit.value.value() << "\n";  
+				output_code.start << "	imul rbx, rcx\n";
+			} else {
+				output_code.start << "	push rax\n";
+				output_code.start << "	mov rax, rbx\n";
+				output_code.start << "	mov rcx, " << term.u_int_lit.value.value() << "\n";
+				output_code.start << "	xor rdx, rdx\n";
+				output_code.start << "	div rcx\n";
+				output_code.start << "	mov rbx, rax\n";
+				output_code.start << "	pop rax\n";
+			}
+
+
+		} else if (std::holds_alternative<Token>(val)) {
+			const Token token = std::get<Token>(val); 
+
+			if (token.type == TokenType::STAR) is_mul = true;
+			else if (token.type == TokenType::BACKWARD_SLASH) is_mul = false;
 		}
-
-		output_code.start << "	mov rcx, " << term.u_int_lit.value.value() << "\n";
-		output_code.start << "	imul rbx, rcx\n";
 	}
 }
 
