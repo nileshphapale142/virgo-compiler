@@ -48,7 +48,7 @@ Follow these steps to compile and execute your program:
 
     If you're working from the project root directory, the path to the Virgo executable will be:
     ```bash
- u:=ld/virgo <filename.vi>
+    build/virgo <filename.vi>
     ```
  
 
