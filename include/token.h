@@ -9,7 +9,7 @@ enum class TokenType {
     // Literals
     INTEGER,
     // Keywords
-    PRINT
+    PRINT, PRINTLN
 };
 
 struct Token {

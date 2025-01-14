@@ -67,7 +67,10 @@ std::vector<Token> Scanner::scan() {
 
                     if (token == "print") {
                         tokens.push_back(Token({TokenType::PRINT}));
-                    } else {
+                    } else if (token == "println") {
+                        tokens.push_back(Token({TokenType::PRINTLN}));
+                    }
+                    else {
                         std::cerr << "Unexpected token" << std::endl;
                         exit(EXIT_FAILURE);
                     }

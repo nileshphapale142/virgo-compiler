@@ -12,6 +12,8 @@ std::string Token::tokenTypeToString() const {
         return "INTEGER";
     case TokenType::PRINT:
         return "PRINT";
+    case TokenType::PRINTLN:
+        return "PRINTLN";
     case TokenType::PLUS:
         return "PLUS";
     case TokenType::MINUS:
