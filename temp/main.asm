@@ -8,6 +8,17 @@ _start:
 	mov rcx, 10
 	imul rbx, rcx
 	add rax, rbx
+	mov rbx, 1
+	mov rcx, 12
+	imul rbx, rcx
+	push rax
+	mov rax, rbx
+	mov rcx, 3
+	xor rdx, rdx
+	div rcx
+	mov rbx, rax
+	pop rax
+	add rax, rbx
 	lea rdi, [print_str + 19]
 	mov r8, rdi
 	call itoa

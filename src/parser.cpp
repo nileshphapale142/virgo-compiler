@@ -35,10 +35,6 @@ std::optional<NodeStmt> Parser::parse_stmt() {
 		NodeStmt stmt;
 		stmt.print = print_stmt.value();
 		return stmt;
-	} else if (auto println_stmt = parse_println()) {
-		NodeStmt stmt;
-		stmt.print = println_stmt.value();
-		return stmt;
 	}
 
 	return std::nullopt;
@@ -48,10 +44,14 @@ std::optional<NodeStmt> Parser::parse_stmt() {
 std::optional<NodePrint> Parser::parse_print() {
 	NodePrint print_node;
 
-	if (!peek().has_value() || peek().value().type != TokenType::PRINT) return std::nullopt;
+	if (!peek().has_value() || (
+	peek().value().type != TokenType::PRINT &&
+	peek().value().type != TokenType::PRINTLN)) return std::nullopt;
+
+	print_node.is_println = peek().value().type == TokenType::PRINTLN;
 
 	consume();
-	
+
 	if (!peek().has_value() || peek().value().type != TokenType::LEFT_PAREN) {
 		std::cerr << "Missing '(' " << std::endl;
 		exit(EXIT_FAILURE);
@@ -66,7 +66,6 @@ std::optional<NodePrint> Parser::parse_print() {
 		exit(EXIT_FAILURE);
 	}
 
-
 	consume();
 
 	if (!peek().has_value() || peek().value().type != TokenType::SEMICOLON) {
@@ -77,40 +76,6 @@ std::optional<NodePrint> Parser::parse_print() {
 	consume();
 
 	return  print_node;
-}
-
-
-std::optional<NodePrintln> Parser::parse_println() {
-	NodePrintln println_node;
-
-	if (!peek().has_value() || peek().value().type != TokenType::PRINTLN) return std::nullopt;
-
-	consume();
-
-	if (!peek().has_value() || peek().value().type != TokenType::LEFT_PAREN) {
-		std::cerr << "Missing '(' " << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
-	consume();
-
-	println_node.expr = parse_expr();
-
-	if (!peek().has_value() || peek().value().type != TokenType::RIGHT_PAREN) {
-		std::cerr << "Missing ')'" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
-	consume();
-
-	if (!peek().has_value() || peek().value().type != TokenType::SEMICOLON) {
-		std::cerr << "Missing ';'" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
-	consume();
-
-	return println_node;
 }
 
 

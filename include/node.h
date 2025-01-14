@@ -16,17 +16,13 @@ struct NodeExpr {
     std::vector<std::variant<NodeFactor, Token>> val_list;
 };
 
-
 struct NodePrint {
     NodeExpr expr;
-};
-
-struct NodePrintln {
-    NodeExpr expr;
+    bool is_println;
 };
 
 struct NodeStmt {
-    std::variant<NodePrint, NodePrintln> print;
+    NodePrint print;
 };
 
 struct NodeStmtList {

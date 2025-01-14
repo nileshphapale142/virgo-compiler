@@ -66,11 +66,7 @@ void CodeGenerator::handle_stmt_list(const NodeStmtList &stmt_list) {
 void CodeGenerator::handle_stmt(const NodeStmt &stmt) {
 	++label_cnt;
 
-	if (std::holds_alternative<NodePrint>(stmt.print)) {
-		handle_print(std::get<NodePrint>(stmt.print));
-	} else if (std::holds_alternative<NodePrintln>(stmt.print)) {
-		handle_println(std::get<NodePrintln>(stmt.print));
-	}
+	handle_print(stmt.print);
 }
 
 
@@ -84,6 +80,12 @@ void CodeGenerator::handle_print(const NodePrint& print_node) {
 	output_code.start << "	mov rdx, r8\n";
 	output_code.start << "	sub rdx, rdi\n";
 	output_code.start << "	inc rdx\n";
+
+	if (print_node.is_println) {
+		output_code.start << "	mov byte [r8 + 1], 10\n";
+		output_code.start << "	inc rdx\n";
+	}
+
 	output_code.start << "	mov rax, 1\n";
 	output_code.start << "	mov rsi, rdi\n";
 	output_code.start << "	mov rdi, 1\n";
@@ -103,46 +105,7 @@ void CodeGenerator::handle_print(const NodePrint& print_node) {
 		output_code.procs << "	jnz itoa_loop\n";
 		output_code.procs << "	ret\n";
 	}
-}	
-
-
-void CodeGenerator::handle_println(const NodePrintln &node) {
-	
-	handle_expr(node.expr);
-
-	output_code.start << "	lea rdi, [print_str + 19]\n";
-	output_code.start << "	mov r8, rdi\n";
-	output_code.start << "	call itoa\n";
-	output_code.start << "	mov rdx, r8\n";
-	output_code.start << "	sub rdx, rdi\n";
-	output_code.start << "	inc rdx\n";
-	
-	output_code.start << "	mov byte [r8 + 1], 10\n";
-	output_code.start << "	inc rdx\n";
-
-	output_code.start << "	mov rax, 1\n";
-	output_code.start << "	mov rsi, rdi\n";
-	output_code.start << "	mov rdi, 1\n";
-	output_code.start << "	syscall\n";
-
-
-	if (label_cnt == 1) {
-		output_code.procs << "itoa:\n";
-		output_code.procs << "	xor rbx, rbx\n";
-		output_code.procs << "	mov rcx, 10\n";
-		output_code.procs << "itoa_loop:\n";
-		output_code.procs << "	xor rdx, rdx\n";
-		output_code.procs << "	div rcx\n";
-		output_code.procs << "	add dl, '0'\n";
-		output_code.procs << "	dec rdi\n";
-		output_code.procs <<" 	mov [rdi], dl\n";
-		output_code.procs << "	test rax, rax\n";
-		output_code.procs << "	jnz itoa_loop\n";
-		output_code.procs << "	ret\n";
-	}
-
 }
-
 
 void CodeGenerator::handle_expr(const NodeExpr &expr) {
 	output_code.start << "	mov rax, 0\n";

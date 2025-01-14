@@ -21,7 +21,6 @@ class CodeGenerator {
 		void handle_stmt_list(const NodeStmtList& stmt_list);
 		void handle_stmt(const NodeStmt &stmt);
 		void handle_print(const NodePrint& node);
-		void handle_println(const NodePrintln& node);
 		void handle_expr(const NodeExpr &expr);
 		void handle_factor(const NodeFactor &factor);
 
