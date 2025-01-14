@@ -21,8 +21,12 @@ struct NodePrint {
     NodeExpr expr;
 };
 
+struct NodePrintln {
+    NodeExpr expr;
+};
+
 struct NodeStmt {
-    NodePrint print;
+    std::variant<NodePrint, NodePrintln> print;
 };
 
 struct NodeStmtList {
