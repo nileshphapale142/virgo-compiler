@@ -23,7 +23,6 @@ $$
     \langle letter \rangle & ::= & \texttt{"a"} \space |\space \texttt{"b"} \space |\space \texttt{"c"} \space |\space \texttt{"d"} \space |\space \texttt{"e"} \space |\space \texttt{"f"} \space |\space \texttt{"g"} \space |\space \texttt{"h"} \space |\space \texttt{"i"} \space |\space \texttt{"j"} \space |\space \texttt{"k"} \space |\space \texttt{"l"} \space |\space \texttt{"m"} \space |\space \texttt{"n"} \space |\space \texttt{"o"} \space |\space \texttt{"p"} \space |\space \texttt{"q"} \space |\space \texttt{"r"} \space |\space \texttt{"s"} \space |\space \texttt{"t"} \space |\space \texttt{"u"} \space |\space \texttt{"v"} \space |\space \texttt{"w"} \space |\space \texttt{"x"} \space |\space \texttt{"y"} \space |\space \texttt{"z"}
   \\
   \langle digit \rangle & ::= & \texttt{"0"} \space |\space \texttt{"1"} \space |\space \texttt{"2"} \space |\space \texttt{"3"} \space |\space \texttt{"4"} \space |\space \texttt{"5"} \space |\space \texttt{"6"} \space |\space \texttt{"7"} \space |\space \texttt{"8"} \space |\space \texttt{"9"}
-``
 \\
 \end{array}
 $$
