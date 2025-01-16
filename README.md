@@ -7,12 +7,13 @@ Work in progress
 $$
 \begin{array}{rcl}
     \langle program \rangle & ::= & \langle stmt-list \rangle \\
-    \langle stmt-list \rangle & ::= & \langle stmt \rangle \space | \space \langle stmt-list \rangle \space \langle stmt \rangle \\
+    \langle stmt-list \rangle & ::= & \langle stmt \rangle \space | \space \langle comment \rangle \space | \space \langle stmt-list \rangle \space \langle stmt \rangle  \space | \space \langle stmt-list \rangle \space \langle comment \rangle\\
     \langle stmt \rangle & ::= & \langle print \rangle  \space | \space \langle println \rangle \\
     \langle print \rangle & ::= & \text{print}(\langle expr \rangle); \\
     \langle println \rangle & ::= & \text{println}(\langle expr \rangle); \\
     \langle expr \rangle & ::= & \langle factor \rangle  \space | \space \langle factor \rangle \space + \space \langle expr \rangle \space | \space \langle factor \rangle \space - \space \langle expr \rangle \\
     \langle factor \rangle & ::= & \langle term \rangle \space | \space \langle term \rangle \space * \space  \langle factor \rangle  \space | \space \langle term \rangle \space / \space \langle factor \rangle  \\
+    \langle commet \rangle & ::= & // \langle any-character \rangle  ^*\\
     \langle term \rangle & ::= & \space UNSIGNED\_INTEGER\_LITERAL
 \end{array}
 $$

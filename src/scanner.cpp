@@ -34,8 +34,17 @@ std::vector<Token> Scanner::scan() {
                 tokens.push_back(Token({TokenType::STAR}));
             break;
 
-            case '/':
-                tokens.push_back(Token({TokenType::BACKWARD_SLASH}));
+            case '/': {
+                if (peek().has_value() && peek().value() == '/') {
+                    consume();
+                    while (peek().has_value() && peek().value() != '\n') {
+                        consume();
+                    }
+                    consume();
+                } else {
+                    tokens.push_back(Token({TokenType::BACKWARD_SLASH}));
+                }
+            }
             break;
             
             case ' ':
