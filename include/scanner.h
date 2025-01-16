@@ -9,7 +9,7 @@ class Scanner {
         explicit Scanner(std::string code);
         std::vector<Token> scan();
     private:
-        std::optional<char> peek();
+        std::optional<char> peek(int offset = 0);
         std::optional<char> consume();
 
         std::string code;

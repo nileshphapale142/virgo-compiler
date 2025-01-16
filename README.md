@@ -13,7 +13,7 @@ $$
     \langle println \rangle & ::= & \text{println}(\langle expr \rangle); \\
     \langle expr \rangle & ::= & \langle factor \rangle  \space | \space \langle factor \rangle \space + \space \langle expr \rangle \space | \space \langle factor \rangle \space - \space \langle expr \rangle \\
     \langle factor \rangle & ::= & \langle term \rangle \space | \space \langle term \rangle \space * \space  \langle factor \rangle  \space | \space \langle term \rangle \space / \space \langle factor \rangle  \\
-    \langle commet \rangle & ::= & // \langle any-character \rangle  ^*\\
+    \langle comment \rangle & ::= & // \langle any-character-except-new-line \rangle  ^* \space | \space /** \langle any-character \rangle^* **/\\
     \langle term \rangle & ::= & \space UNSIGNED\_INTEGER\_LITERAL
 \end{array}
 $$

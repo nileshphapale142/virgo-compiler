@@ -41,6 +41,40 @@ std::vector<Token> Scanner::scan() {
                         consume();
                     }
                     consume();
+                } else if (
+                    peek().has_value() && 
+                    peek().value() == '*' && 
+                    peek(1).has_value() && 
+                    peek(1).value() == '*') {
+                        consume();
+                        consume();
+
+                        
+                        bool is_closing_found = false;
+
+                        while (peek().has_value()) {
+                            if (
+                                peek().value() == '*' && 
+                                peek(1).has_value() && 
+                                peek(1).value() == '*' && 
+                                peek(2).has_value() && 
+                                peek(2).value() == '/') {
+
+                                    is_closing_found = true;
+                                    
+                                    consume();
+                                    consume();
+                                    consume();
+                                    break;
+                            } 
+
+                            consume();
+                        }
+
+                        if (!is_closing_found) {
+                            std::cerr << "Closing for multi line comment not found" << std::endl;
+                            exit(EXIT_FAILURE);
+                        }
                 } else {
                     tokens.push_back(Token({TokenType::BACKWARD_SLASH}));
                 }
@@ -96,8 +130,8 @@ std::vector<Token> Scanner::scan() {
 }
 
 
-std::optional<char> Scanner::peek() {
-    if (curr_index < code.length()) return code.at(curr_index);
+std::optional<char> Scanner::peek(int offset) {
+    if (curr_index + offset < code.length()) return code.at(curr_index + offset);
 
     return std::nullopt;
 }   

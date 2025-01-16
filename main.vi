@@ -1,3 +1,7 @@
-println(10 + //12 / 3); 
-// this is a comment
-// hi what are you doing
+/**
+println(1342);
+this 
+is multi line
+comment
+**/
+println(123242);
