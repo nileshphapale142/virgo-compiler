@@ -5,11 +5,13 @@
 
 enum class TokenType {
     // Single-character tokens
-    LEFT_PAREN, RIGHT_PAREN, SEMICOLON, PLUS, MINUS, STAR, BACKWARD_SLASH,
+    LEFT_PAREN, RIGHT_PAREN, SEMICOLON, PLUS, MINUS, STAR, BACKWARD_SLASH, EQUAL,
     // Literals
     INTEGER,
+    
+    IDENTIFIER,
     // Keywords
-    PRINT, PRINTLN
+    PRINT, PRINTLN, LET
 };
 
 struct Token {

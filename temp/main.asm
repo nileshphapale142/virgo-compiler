@@ -5,7 +5,7 @@ section .text
 _start:
 	mov rax, 0
 	mov rbx, 1
-	mov rcx, 123242
+	mov rcx, 1232
 	imul rbx, rcx
 	add rax, rbx
 	lea rdi, [print_str + 19]

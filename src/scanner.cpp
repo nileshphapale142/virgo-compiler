@@ -1,5 +1,6 @@
 #include "scanner.h"
 #include <iostream>
+#include <cctype>
 
 Scanner::Scanner(std::string code)
 : code(std::move(code)), curr_index(0) {}
@@ -35,13 +36,13 @@ std::vector<Token> Scanner::scan() {
             break;
 
             case '/': {
-                if (peek().has_value() && peek().value() == '/') {
+                if (peek().has_value() && peek().value() == '/') { //single line comment
                     consume();
                     while (peek().has_value() && peek().value() != '\n') {
                         consume();
                     }
                     consume();
-                } else if (
+                } else if ( // mulit-line comment
                     peek().has_value() && 
                     peek().value() == '*' && 
                     peek(1).has_value() && 
@@ -80,6 +81,11 @@ std::vector<Token> Scanner::scan() {
                 }
             }
             break;
+
+
+            case '=':
+                tokens.push_back(Token({TokenType::EQUAL}));
+                break;
             
             case ' ':
             case '\r':
@@ -104,7 +110,7 @@ std::vector<Token> Scanner::scan() {
 
                     token.push_back(c);
 
-                    while (peek().has_value() && isalpha(peek().value())) {
+                    while (peek().has_value() && (isalpha(peek().value()) || isdigit(c))) {
                         token.push_back(consume().value());
                     }
 
@@ -112,14 +118,15 @@ std::vector<Token> Scanner::scan() {
                         tokens.push_back(Token({TokenType::PRINT}));
                     } else if (token == "println") {
                         tokens.push_back(Token({TokenType::PRINTLN}));
+                    } else if (token == "let") {
+                        tokens.push_back(Token({TokenType::LET}));
                     }
                     else {
-                        std::cerr << "Unexpected token" << std::endl;
-                        exit(EXIT_FAILURE);
+                        tokens.push_back(Token({TokenType::IDENTIFIER, token}));
                     }
 
                 } else {
-                    std::cerr << "Unexpected token" << std::endl;
+                    std::cerr << "Unexpected token: " << c << std::endl;
                     exit(EXIT_FAILURE);
                 }
             break;
