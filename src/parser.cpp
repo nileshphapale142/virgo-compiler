@@ -31,9 +31,13 @@ NodeStmtList Parser::parse_stmt_list() {
 }
 
 std::optional<NodeStmt> Parser::parse_stmt() {
+	NodeStmt stmt;
+
 	if (auto print_stmt = parse_print()) {
-		NodeStmt stmt;
-		stmt.print = print_stmt.value();
+		stmt.stmt = print_stmt.value();
+		return stmt;
+	} else if (auto decl_stmt = parse_declaration()) {
+		stmt.stmt = decl_stmt.value();
 		return stmt;
 	}
 
@@ -76,6 +80,39 @@ std::optional<NodePrint> Parser::parse_print() {
 	consume();
 
 	return  print_node;
+}
+
+std::optional<NodeDeclaration> Parser::parse_declaration() {
+	NodeDeclaration decl;
+
+	if (!peek().has_value() || peek().value().type != TokenType::LET) return std::nullopt;
+
+	consume();
+
+	if (!peek().has_value() || peek().value().type != TokenType::IDENTIFIER) {
+		std::cerr << "Expected an identifier" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	decl.ident = NodeIdentifier(consume().value());;
+
+	if (!peek().has_value() || peek().value().type != TokenType::EQUAL) {
+		std::cerr << "Expected = sign" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	consume();
+
+	decl.expr = parse_expr();
+
+	if (!peek().has_value() || peek().value().type != TokenType::SEMICOLON) {
+		std::cerr << "Expected ;" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	consume();
+
+	return decl;
 }
 
 

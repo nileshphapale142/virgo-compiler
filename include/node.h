@@ -8,6 +8,10 @@ struct NodeTerm {
     Token u_int_lit;
 };
 
+struct NodeIdentifier {
+    Token name;
+};
+
 struct NodeFactor {
     std::vector<std::variant<NodeTerm, Token>> val_list;
 };
@@ -21,8 +25,13 @@ struct NodePrint {
     bool is_println;
 };
 
+struct NodeDeclaration {
+    NodeIdentifier ident;
+    NodeExpr expr;
+};
+
 struct NodeStmt {
-    NodePrint print;
+    std::variant<NodePrint, NodeDeclaration> stmt;
 };
 
 struct NodeStmtList {
