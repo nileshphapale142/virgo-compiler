@@ -1,5 +1,6 @@
 #include "codegen.h"
 #include <iostream>
+#include <algorithm>
 #include <cassert>
 
 CodeGenerator::CodeGenerator(NodeProgram root)  
@@ -66,9 +67,9 @@ void CodeGenerator::handle_stmt_list(const NodeStmtList &stmt_list) {
 
 void CodeGenerator::handle_stmt(const NodeStmt &stmt) {
 	if (std::holds_alternative<NodeDeclaration>(stmt.stmt)) {
-		++label_cnt;
 		handle_declaration(std::get<NodeDeclaration>(stmt.stmt));
 	} else if(std::holds_alternative<NodePrint>(stmt.stmt)) {
+		++label_cnt;
 		handle_print(std::get<NodePrint>(stmt.stmt));
 	} else {
 		std::cerr << "Unknown statment type" << std::endl;
@@ -118,6 +119,8 @@ void CodeGenerator::handle_declaration(const NodeDeclaration &decl) {
 	handle_expr(decl.expr);
 
 	output_code.start << "	push rax\n";
+
+	vars.push_back(decl.ident.name.value.value());
 }
 
 void CodeGenerator::handle_expr(const NodeExpr &expr) {
@@ -158,7 +161,6 @@ void CodeGenerator::handle_factor(const NodeFactor& factor) {
 
 		if (std::holds_alternative<NodeTerm>(val)) {
 			const NodeTerm term = std::get<NodeTerm>(val);
-			//todo: in case term.u_int_lit.value does not cotain value error
 			if (std::holds_alternative<Token>(term.value)) {
 				const Token u_int = std::get<Token>(term.value);
 
@@ -168,16 +170,40 @@ void CodeGenerator::handle_factor(const NodeFactor& factor) {
 				} else {
 					output_code.start << "	push rax\n";
 					output_code.start << "	mov rax, rbx\n";
-					output_code.start << "	mov rcx, " << u_int.value.value() << "\n";
+					output_code.start << "	mov rcx, " << u_int.value.value()  << "\n";
 					output_code.start << "	xor rdx, rdx\n";
 					output_code.start << "	div rcx\n";
 					output_code.start << "	mov rbx, rax\n";
 					output_code.start << "	pop rax\n";
 				}
 			} else if (std::holds_alternative<NodeIdentifier>(term.value)) {
+
 				const NodeIdentifier ident = std::get<NodeIdentifier>(term.value);
-				std::cout << "Hello reached here" << std::endl;
-				assert(false);
+
+				std::vector<std::string>::iterator itr = std::find_if(vars.begin(), vars.end(),  [&](std::string var_name) {
+					if (ident.name.value.value() == var_name) return true;
+					return false;
+				});
+
+				if (itr == vars.end()) {
+					std::cerr << "Unkown identfier " << ident.name.value.value() << std::endl;
+					exit(EXIT_FAILURE);
+				}
+
+				int index = vars.size() - 1 - std::distance(vars.begin(), itr);
+
+				if (is_mul) {
+					output_code.start << "	mov rcx, [rsp + " << index * 8 << "]\n";
+					output_code.start << "	imul rbx, rcx\n";
+				} else {
+					output_code.start << "	push rax\n";
+					output_code.start << "	mov rax, rbx\n";
+					output_code.start << "	mov rcx, [rsp + " << index * 8   << "]\n";
+					output_code.start << "	xor rdx, rdx\n";
+					output_code.start << "	div rcx\n";
+					output_code.start << "	mov rbx, rax\n";
+					output_code.start << "	pop rax\n";
+				}
 			}
 
 

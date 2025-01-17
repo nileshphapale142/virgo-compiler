@@ -1,8 +1,6 @@
-/**
-println(1342);
-this 
-is multi line
-comment
-**/
-let name = 1 + 2 + 3;
-println(name);
+let x = 6;
+let y = 12;
+println(x);
+println(y);
+println(12 / 6);
+println(y / x);

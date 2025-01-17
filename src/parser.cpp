@@ -94,7 +94,7 @@ std::optional<NodeDeclaration> Parser::parse_declaration() {
 		exit(EXIT_FAILURE);
 	}
 
-	decl.ident = NodeIdentifier({consume().value()});;
+	decl.ident = NodeIdentifier({consume().value()});
 
 	if (!peek().has_value() || peek().value().type != TokenType::EQUAL) {
 		std::cerr << "Expected = sign" << std::endl;
@@ -127,7 +127,6 @@ NodeExpr Parser::parse_expr() {
 			peek().value().type != TokenType::MINUS)) break;
 		
 		expr.val_list.push_back(consume().value());
-
 	}
 
 	return expr;
@@ -153,10 +152,17 @@ std::optional<NodeFactor> Parser::parse_factor() {
 
 std::optional<NodeTerm> Parser::parse_term() {
 
-	if (peek().has_value() && 
-	(peek().value().type == TokenType::INTEGER || peek().value().type == TokenType::IDENTIFIER)){
+	if (peek().has_value()){
 		NodeTerm term;
-		term.value = consume().value();
+		if (peek().value().type == TokenType::INTEGER) {
+			term.value = consume().value();
+		} else if (peek().value().type == TokenType::IDENTIFIER) {
+			term.value = NodeIdentifier({consume().value()});
+		} else {
+			std::cout << "Expected an unsigned integer or an identifier" << std::endl;
+			exit(EXIT_FAILURE);
+		}
+		
 		return term;
 	} else {
 		std::cerr << "Expected an unsigned integer or an identifier" << std::endl;
