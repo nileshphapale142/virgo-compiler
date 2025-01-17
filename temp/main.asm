@@ -5,7 +5,15 @@ section .text
 _start:
 	mov rax, 0
 	mov rbx, 1
-	mov rcx, 3123
+	mov rcx, 1
+	imul rbx, rcx
+	add rax, rbx
+	mov rbx, 1
+	mov rcx, 2
+	imul rbx, rcx
+	add rax, rbx
+	mov rbx, 1
+	mov rcx, 3
 	imul rbx, rcx
 	add rax, rbx
 	push rax

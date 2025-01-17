@@ -4,5 +4,5 @@ this
 is multi line
 comment
 **/
-let name = 3123;
+let name = 1 + 2 + 3;
 println(1232);
