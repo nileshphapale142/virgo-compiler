@@ -5,4 +5,4 @@ is multi line
 comment
 **/
 let name = 1 + 2 + 3;
-println(1232);
+println(name);

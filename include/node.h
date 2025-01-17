@@ -4,13 +4,14 @@
 #include <variant>
 #include "token.h"
 
-struct NodeTerm {
-    Token u_int_lit;
-};
 
 struct NodeIdentifier {
     Token name;
 };
+struct NodeTerm {
+    std::variant<Token, NodeIdentifier> value;
+};
+
 
 struct NodeFactor {
     std::vector<std::variant<NodeTerm, Token>> val_list;

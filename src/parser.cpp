@@ -153,12 +153,13 @@ std::optional<NodeFactor> Parser::parse_factor() {
 
 std::optional<NodeTerm> Parser::parse_term() {
 
-	if (peek().has_value() && peek().value().type == TokenType::INTEGER) {
+	if (peek().has_value() && 
+	(peek().value().type == TokenType::INTEGER || peek().value().type == TokenType::IDENTIFIER)){
 		NodeTerm term;
-		term.u_int_lit = consume().value();
+		term.value = consume().value();
 		return term;
 	} else {
-		std::cerr << "Expected an unsigned integer" << std::endl;
+		std::cerr << "Expected an unsigned integer or an identifier" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 

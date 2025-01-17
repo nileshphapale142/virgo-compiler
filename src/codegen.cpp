@@ -1,5 +1,6 @@
 #include "codegen.h"
 #include <iostream>
+#include <cassert>
 
 CodeGenerator::CodeGenerator(NodeProgram root)  
 : root(std::move(root)), label_cnt(0) {}
@@ -158,18 +159,25 @@ void CodeGenerator::handle_factor(const NodeFactor& factor) {
 		if (std::holds_alternative<NodeTerm>(val)) {
 			const NodeTerm term = std::get<NodeTerm>(val);
 			//todo: in case term.u_int_lit.value does not cotain value error
+			if (std::holds_alternative<Token>(term.value)) {
+				const Token u_int = std::get<Token>(term.value);
 
-			if (is_mul) {
-				output_code.start << "	mov rcx, " << term.u_int_lit.value.value() << "\n";  
-				output_code.start << "	imul rbx, rcx\n";
-			} else {
-				output_code.start << "	push rax\n";
-				output_code.start << "	mov rax, rbx\n";
-				output_code.start << "	mov rcx, " << term.u_int_lit.value.value() << "\n";
-				output_code.start << "	xor rdx, rdx\n";
-				output_code.start << "	div rcx\n";
-				output_code.start << "	mov rbx, rax\n";
-				output_code.start << "	pop rax\n";
+				if (is_mul) {
+					output_code.start << "	mov rcx, " << u_int.value.value() << "\n";  
+					output_code.start << "	imul rbx, rcx\n";
+				} else {
+					output_code.start << "	push rax\n";
+					output_code.start << "	mov rax, rbx\n";
+					output_code.start << "	mov rcx, " << u_int.value.value() << "\n";
+					output_code.start << "	xor rdx, rdx\n";
+					output_code.start << "	div rcx\n";
+					output_code.start << "	mov rbx, rax\n";
+					output_code.start << "	pop rax\n";
+				}
+			} else if (std::holds_alternative<NodeIdentifier>(term.value)) {
+				const NodeIdentifier ident = std::get<NodeIdentifier>(term.value);
+				std::cout << "Hello reached here" << std::endl;
+				assert(false);
 			}
 
 

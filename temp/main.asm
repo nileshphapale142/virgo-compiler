@@ -19,7 +19,7 @@ _start:
 	push rax
 	mov rax, 0
 	mov rbx, 1
-	mov rcx, 1232
+	mov rcx, name
 	imul rbx, rcx
 	add rax, rbx
 	lea rdi, [print_str + 19]
