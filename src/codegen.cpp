@@ -64,9 +64,15 @@ void CodeGenerator::handle_stmt_list(const NodeStmtList &stmt_list) {
 
 
 void CodeGenerator::handle_stmt(const NodeStmt &stmt) {
-	++label_cnt;
-
-	handle_print(stmt.print);
+	if (std::holds_alternative<NodeDeclaration>(stmt.stmt)) {
+		++label_cnt;
+		handle_declaration(std::get<NodeDeclaration>(stmt.stmt));
+	} else if(std::holds_alternative<NodePrint>(stmt.stmt)) {
+		handle_print(std::get<NodePrint>(stmt.stmt));
+	} else {
+		std::cerr << "Unknown statment type" << std::endl;
+		exit(EXIT_FAILURE);
+	}
 }
 
 
@@ -105,6 +111,12 @@ void CodeGenerator::handle_print(const NodePrint& print_node) {
 		output_code.procs << "	jnz itoa_loop\n";
 		output_code.procs << "	ret\n";
 	}
+}
+
+void CodeGenerator::handle_declaration(const NodeDeclaration &decl) {
+	handle_expr(decl.expr);
+
+	output_code.start << "	push rax\n";
 }
 
 void CodeGenerator::handle_expr(const NodeExpr &expr) {

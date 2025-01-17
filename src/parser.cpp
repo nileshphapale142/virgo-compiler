@@ -94,7 +94,7 @@ std::optional<NodeDeclaration> Parser::parse_declaration() {
 		exit(EXIT_FAILURE);
 	}
 
-	decl.ident = NodeIdentifier(consume().value());;
+	decl.ident = NodeIdentifier({consume().value()});;
 
 	if (!peek().has_value() || peek().value().type != TokenType::EQUAL) {
 		std::cerr << "Expected = sign" << std::endl;

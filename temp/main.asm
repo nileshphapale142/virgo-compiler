@@ -5,6 +5,12 @@ section .text
 _start:
 	mov rax, 0
 	mov rbx, 1
+	mov rcx, 3123
+	imul rbx, rcx
+	add rax, rbx
+	push rax
+	mov rax, 0
+	mov rbx, 1
 	mov rcx, 1232
 	imul rbx, rcx
 	add rax, rbx
