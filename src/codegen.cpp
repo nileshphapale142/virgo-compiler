@@ -148,7 +148,6 @@ void CodeGenerator::handle_expr(const NodeExpr &expr) {
 			if (token.type == TokenType::PLUS) operation = "add";
 			else if (token.type == TokenType::MINUS) operation = "sub";
 		}
-		//todo: else error throw
 	}
 }
 

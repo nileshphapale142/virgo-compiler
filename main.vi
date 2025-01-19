@@ -1,6 +1,6 @@
-let x = 6;
+let x = 1;
 let y = 12;
-println(x);
+/**println(x);
 println(y);
-println(12 / 6);
-println(y / x);
+println(12 / 4);**/
+println(y / x); 
