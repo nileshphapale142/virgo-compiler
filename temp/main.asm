@@ -19,13 +19,10 @@ _start:
 	mov rbx, 1
 	mov rcx, [rsp + 0]
 	imul rbx, rcx
-	push rax
-	mov rax, rbx
+	add rax, rbx
+	mov rbx, 1
 	mov rcx, [rsp + 8]
-	xor rdx, rdx
-	div rcx
-	mov rbx, rax
-	pop rax
+	imul rbx, rcx
 	add rax, rbx
 	lea rdi, [print_str + 19]
 	mov r8, rdi

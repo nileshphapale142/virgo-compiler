@@ -3,4 +3,4 @@ let y = 12;
 /**println(x);
 println(y);
 println(12 / 4);**/
-println(y / x); 
+println(y  + x); 
