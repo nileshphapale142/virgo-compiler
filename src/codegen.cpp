@@ -33,28 +33,11 @@ std::string CodeGenerator::generate() {
 
 void CodeGenerator::collect_section_data(const NodeStmtList *stmt_list) {
 	label_cnt = 0;
-
-	// output_code.data << "section .data\n";
-
-	// for (const auto& [print] : stmt_list.stmts) {
-	// 	++label_cnt;
-	// 	// std::string value = print.expr.term.u_int_lit.value.value_or("");
-
-	// 	output_code.start << "	msg_" << label_cnt << " db \"" << value << "\", 0\n";
-	// }
 }
 
 void CodeGenerator::collect_section_bss(const NodeStmtList *stmt_list) {
 	output_code.bss << "section .bss\n";
 	output_code.bss << "	print_str resb 20\n";
-
-	// label_cnt = 0;
-	
-	// for (auto stmt : stmt_list.stmts) {
-	// 	++label_cnt;
-	// }hel
-
-
 }
 
 
@@ -72,6 +55,8 @@ void CodeGenerator::handle_stmt(const NodeStmt *stmt) {
 		handle_print(std::get<NodePrint*>(stmt->stmt));
 	} else if (std::holds_alternative<NodeScope*>(stmt->stmt)) {
 		handle_scope(std::get<NodeScope*>(stmt->stmt));
+	} else if (std::holds_alternative<NodeIf*>(stmt->stmt)) {
+		handle_if(std::get<NodeIf*>(stmt->stmt));
 	}else {
 		std::cerr << "Unknown statement type" << std::endl;
 		exit(EXIT_FAILURE);
@@ -103,7 +88,9 @@ void CodeGenerator::handle_scope(const NodeScope *scope) {
 	}
 }
 
-
+void CodeGenerator::handle_if(const NodeIf *if_node) {
+	//todo: implement if statement
+}
 
 void CodeGenerator::handle_print(const NodePrint *print_node) {
 	++label_cnt;
