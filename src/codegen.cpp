@@ -3,14 +3,14 @@
 #include <algorithm>
 #include <cassert>
 
-CodeGenerator::CodeGenerator(NodeProgram root)  
-: root(std::move(root)), label_cnt(0) {}
+CodeGenerator::CodeGenerator(NodeProgram* root)
+: root(root), label_cnt(0) {}
 
 std::string CodeGenerator::generate() {
 
 	// collect_section_data(root.stmt_list);
 	
-	collect_section_bss(root.stmt_list);
+	collect_section_bss(root->stmt_list);
 
 	output_code.text << "section .text\n";
 	output_code.text << "	global _start\n";
@@ -19,7 +19,7 @@ std::string CodeGenerator::generate() {
 
 	label_cnt = 0;
 
-	handle_stmt_list(root.stmt_list);
+	handle_stmt_list(root->stmt_list);
 
 	add_exit_code();
 
@@ -31,7 +31,7 @@ std::string CodeGenerator::generate() {
 
 
 
-void CodeGenerator::collect_section_data(const NodeStmtList &stmt_list) {
+void CodeGenerator::collect_section_data(const NodeStmtList *stmt_list) {
 	label_cnt = 0;
 
 	// output_code.data << "section .data\n";
@@ -44,7 +44,7 @@ void CodeGenerator::collect_section_data(const NodeStmtList &stmt_list) {
 	// }
 }
 
-void CodeGenerator::collect_section_bss(const NodeStmtList &stmt_list) {
+void CodeGenerator::collect_section_bss(const NodeStmtList *stmt_list) {
 	output_code.bss << "section .bss\n";
 	output_code.bss << "	print_str resb 20\n";
 
@@ -58,29 +58,29 @@ void CodeGenerator::collect_section_bss(const NodeStmtList &stmt_list) {
 }
 
 
-void CodeGenerator::handle_stmt_list(const NodeStmtList &stmt_list) {
-	for (const auto &stmt : stmt_list.stmts) {
+void CodeGenerator::handle_stmt_list(const NodeStmtList *stmt_list) {
+	for (const auto &stmt : stmt_list->stmts) {
 		handle_stmt(stmt);
 	}
 } 
 
 
-void CodeGenerator::handle_stmt(const NodeStmt &stmt) {
-	if (std::holds_alternative<NodeDeclaration>(stmt.stmt)) {
-		handle_declaration(std::get<NodeDeclaration>(stmt.stmt));
-	} else if(std::holds_alternative<NodePrint>(stmt.stmt)) {
+void CodeGenerator::handle_stmt(const NodeStmt *stmt) {
+	if (std::holds_alternative<NodeDeclaration*>(stmt->stmt)) {
+		handle_declaration(std::get<NodeDeclaration*>(stmt->stmt));
+	} else if(std::holds_alternative<NodePrint*>(stmt->stmt)) {
 		++label_cnt;
-		handle_print(std::get<NodePrint>(stmt.stmt));
+		handle_print(std::get<NodePrint*>(stmt->stmt));
 	} else {
-		std::cerr << "Unknown statment type" << std::endl;
+		std::cerr << "Unknown statement type" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 }
 
 
-void CodeGenerator::handle_print(const NodePrint& print_node) {
+void CodeGenerator::handle_print(const NodePrint *print_node) {
 
-	handle_expr(print_node.expr);
+	handle_expr(print_node->expr);
 
 	output_code.start << "	lea rdi, [print_str + 19]\n";
 	output_code.start << "	mov r8, rdi\n";
@@ -89,7 +89,7 @@ void CodeGenerator::handle_print(const NodePrint& print_node) {
 	output_code.start << "	sub rdx, rdi\n";
 	output_code.start << "	inc rdx\n";
 
-	if (print_node.is_println) {
+	if (print_node->is_println) {
 		output_code.start << "	mov byte [r8 + 1], 10\n";
 		output_code.start << "	inc rdx\n";
 	}
@@ -115,23 +115,23 @@ void CodeGenerator::handle_print(const NodePrint& print_node) {
 	}
 }
 
-void CodeGenerator::handle_declaration(const NodeDeclaration &decl) {
-	handle_expr(decl.expr);
+void CodeGenerator::handle_declaration(const NodeDeclaration *decl) {
+	handle_expr(decl->expr);
 
 	output_code.start << "	push rax\n";
 
-	vars.push_back(decl.ident.name.value.value());
+	vars.push_back(decl->ident->name.value.value());
 }
 
-void CodeGenerator::handle_expr(const NodeExpr &expr) {
+void CodeGenerator::handle_expr(const NodeExpr *expr) {
 	output_code.start << "	mov rax, 0\n";
 	std::string operation = "add";
 
-	for (const auto &val : expr.val_list) {	
+	for (const auto &val : expr->val_list) {
 
-		if (std::holds_alternative<NodeFactor>(val)) {
+		if (std::holds_alternative<NodeFactor*>(val)) {
 
-			const NodeFactor factor = std::get<NodeFactor>(val);
+			const NodeFactor* factor = std::get<NodeFactor*>(val);
 			
 			handle_factor(factor);
 
@@ -152,16 +152,16 @@ void CodeGenerator::handle_expr(const NodeExpr &expr) {
 }
 
 
-void CodeGenerator::handle_factor(const NodeFactor& factor) {
+void CodeGenerator::handle_factor(const NodeFactor *factor) {
 	output_code.start << "	mov rbx, 1\n";
 	bool is_mul = true;
 
-	for (const auto& val : factor.val_list) {
+	for (const auto& val : factor->val_list) {
 
-		if (std::holds_alternative<NodeTerm>(val)) {
-			const NodeTerm term = std::get<NodeTerm>(val);
-			if (std::holds_alternative<Token>(term.value)) {
-				const Token u_int = std::get<Token>(term.value);
+		if (std::holds_alternative<NodeTerm*>(val)) {
+			const NodeTerm* term = std::get<NodeTerm*>(val);
+			if (std::holds_alternative<Token>(term->value)) {
+				const Token u_int = std::get<Token>(term->value);
 
 				if (is_mul) {
 					output_code.start << "	mov rcx, " << u_int.value.value() << "\n";  
@@ -175,17 +175,17 @@ void CodeGenerator::handle_factor(const NodeFactor& factor) {
 					output_code.start << "	mov rbx, rax\n";
 					output_code.start << "	pop rax\n";
 				}
-			} else if (std::holds_alternative<NodeIdentifier>(term.value)) {
+			} else if (std::holds_alternative<NodeIdentifier*>(term->value)) {
 
-				const NodeIdentifier ident = std::get<NodeIdentifier>(term.value);
+				const NodeIdentifier* ident = std::get<NodeIdentifier*>(term->value);
 
-				std::vector<std::string>::iterator itr = std::find_if(vars.begin(), vars.end(),  [&](std::string var_name) {
-					if (ident.name.value.value() == var_name) return true;
+				auto itr = std::ranges::find_if(vars,  [&](const std::string& var_name) {
+					if (ident->name.value.value() == var_name) return true;
 					return false;
 				});
 
 				if (itr == vars.end()) {
-					std::cerr << "Unkown identfier " << ident.name.value.value() << std::endl;
+					std::cerr << "Unknown identifier " << ident->name.value.value() << std::endl;
 					exit(EXIT_FAILURE);
 				}
 
