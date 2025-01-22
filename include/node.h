@@ -13,42 +13,40 @@ struct NodeIdentifier {
     Token name;
 };
 struct NodeTerm {
-    std::variant<Token, NodeIdentifier> value;
+    std::variant<Token, NodeIdentifier*> value;
 };
 
 struct NodeFactor {
-    std::vector<std::variant<NodeTerm, Token>> val_list;
+    std::vector<std::variant<NodeTerm*, Token>> val_list;
 };
 
 struct NodeExpr {
-    std::vector<std::variant<NodeFactor, Token>> val_list;
+    std::vector<std::variant<NodeFactor*, Token>> val_list;
 };
 
 struct NodePrint {
-    NodeExpr expr;
+    NodeExpr* expr;
     bool is_println;
 };
 
 struct NodeDeclaration {
-    NodeIdentifier ident;
-    NodeExpr expr;
+    NodeIdentifier* ident;
+    NodeExpr* expr;
 };
 
 struct NodeStmt {
-    std::variant<NodePrint, NodeDeclaration, NodeScope> stmt;
+    std::variant<NodePrint*, NodeDeclaration*, NodeScope*> stmt;
 };
 
 struct NodeStmtList {
-    std::vector<NodeStmt> stmts;
+    std::vector<NodeStmt*> stmts;
 };
 
 
 struct NodeScope {
-    NodeStmtList stmt_list;
+    NodeStmtList* stmt_list;
 };
 
 struct NodeProgram {
-    NodeStmtList stmt_list;
+    NodeStmtList* stmt_list;
 };
-
-
