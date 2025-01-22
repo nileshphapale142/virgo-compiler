@@ -69,16 +69,44 @@ void CodeGenerator::handle_stmt(const NodeStmt *stmt) {
 	if (std::holds_alternative<NodeDeclaration*>(stmt->stmt)) {
 		handle_declaration(std::get<NodeDeclaration*>(stmt->stmt));
 	} else if(std::holds_alternative<NodePrint*>(stmt->stmt)) {
-		++label_cnt;
 		handle_print(std::get<NodePrint*>(stmt->stmt));
-	} else {
+	} else if (std::holds_alternative<NodeScope*>(stmt->stmt)) {
+		handle_scope(std::get<NodeScope*>(stmt->stmt));
+	}else {
 		std::cerr << "Unknown statement type" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 }
 
+void CodeGenerator::handle_scope(const NodeScope *scope) {
+	int scope_begin_var_size = -1;
+
+	for (const auto stmt : scope->stmt_list->stmts) {
+		if (std::holds_alternative<NodeDeclaration*>(stmt->stmt)) {
+			scope_begin_var_size = (scope_begin_var_size == -1 ? vars.size() : scope_begin_var_size);
+			handle_declaration(std::get<NodeDeclaration*>(stmt->stmt));
+		} else if (std::holds_alternative<NodePrint*>(stmt->stmt)) {
+			handle_print(std::get<NodePrint*>(stmt->stmt));
+		} else if (std::holds_alternative<NodeScope*>(stmt->stmt)) {
+			handle_scope(std::get<NodeScope*>(stmt->stmt));
+		} else {
+			std::cerr << "Unknown statement type" << std::endl;
+			exit(EXIT_FAILURE);
+		}
+	}
+
+	if (scope_begin_var_size == -1) return;
+
+	while (vars.size() != scope_begin_var_size) {
+		output_code.start << "	pop rax\n";
+		vars.pop_back();
+	}
+}
+
+
 
 void CodeGenerator::handle_print(const NodePrint *print_node) {
+	++label_cnt;
 
 	handle_expr(print_node->expr);
 

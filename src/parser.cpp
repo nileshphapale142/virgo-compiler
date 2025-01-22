@@ -11,6 +11,11 @@ NodeProgram* Parser::parse() {
 
 	program->stmt_list = parse_stmt_list();
 
+	if (peek().has_value()) {
+		std::cerr << "Unknown Syntax" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
 	return program;
 }
 
@@ -22,22 +27,23 @@ NodeStmtList *Parser::parse_stmt_list() {
 		stmt_list->stmts.push_back(stmt.value());
 	}
 
-	if (peek().has_value()) {
-		std::cerr << "Unknown Syntax" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
 	return stmt_list;
 }
 
-std::optional<NodeStmt *> Parser::parse_stmt() {
+std::optional<NodeStmt*> Parser::parse_stmt() {
 	auto* stmt = new NodeStmt();
 
 	if (auto print_stmt = parse_print()) {
 		stmt->stmt = print_stmt.value();
 		return stmt;
-	} else if (auto decl_stmt = parse_declaration()) {
+	}
+	if (auto decl_stmt = parse_declaration()) {
 		stmt->stmt = decl_stmt.value();
+		return stmt;
+	}
+
+	if (auto scope = parse_scope()) {
+		stmt->stmt = scope.value();
 		return stmt;
 	}
 
@@ -45,7 +51,7 @@ std::optional<NodeStmt *> Parser::parse_stmt() {
 };
 
 
-std::optional<NodePrint *> Parser::parse_print() {
+std::optional<NodePrint*> Parser::parse_print() {
 
 	if (!peek().has_value() || (
 	peek().value().type != TokenType::PRINT &&

@@ -4,7 +4,12 @@
 
 {
     let z = 12;
-    println(z);
-}
+    {
+        let x = z + 5;
+        println(x);
+    }
 
+    println(x);
+}
+//println(z);
 // println(y  + x); 
