@@ -16,7 +16,6 @@ struct NodeTerm {
     std::variant<Token, NodeIdentifier> value;
 };
 
-
 struct NodeFactor {
     std::vector<std::variant<NodeTerm, Token>> val_list;
 };
