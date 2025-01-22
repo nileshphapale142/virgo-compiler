@@ -1,18 +1,19 @@
 # Virgo Compiler
 
 Work in progress:
-**Scope**
+**if statement**
 
 ## Grammar
 
 $$
 \begin{array}{rcl}
     \langle program \rangle & ::= & \langle stmt-list \rangle \\
-    \langle stmt-list \rangle & ::= & \epsilon \space | \space \langle stmt \rangle \space | \space \langle comment \rangle \space | \space \langle stmt-list \rangle \space \langle stmt \rangle  \space | \space \langle stmt-list \rangle \space \langle comment \rangle\\
-    \langle stmt \rangle & ::= & \langle print \rangle  \space | \space \langle println \rangle \space | \space \langle declaration \rangle \space | \space \langle scope \rangle \\
+    \langle stmt-list \rangle & ::= & \epsilon \space | \space \langle stmt \rangle \space  | \space \langle stmt-list \rangle \space \langle stmt \rangle \\
+    \langle stmt \rangle & ::= & \langle print \rangle  \space | \space \langle println \rangle \space | \space \langle declaration \rangle \space | \space \langle scope \rangle \space | \space \langle if \rangle \space | \space \langle comment \rangle\\
     \langle print \rangle & ::= & \texttt{"print("}\langle expr \rangle\texttt{");"} \\
     \langle println \rangle & ::= & \texttt{"println("}\langle expr \rangle\texttt{");"} \\
     \langle declaration \rangle & ::= & \texttt{"let"} \space \langle identifier \rangle \texttt{"="} \space \langle expr \rangle \texttt{";"}   \\
+    \langle if \rangle & ::= & \texttt{"if"} \space \langle expr \rangle \space \langle scope \rangle\\
     \langle scope \rangle & ::= & \texttt{"\{"} \langle stmt-list \rangle \texttt{"\}"}\\
     \langle expr \rangle & ::= & \langle factor \rangle  \space | \space \langle factor \rangle \space \texttt{"+"} \space \langle expr \rangle \space | \space \langle factor \rangle \space \texttt{"-"} \space \langle expr \rangle \\
     \langle factor \rangle & ::= & \langle term \rangle \space | \space \langle term \rangle \space \texttt{"*"} \space  \langle factor \rangle  \space | \space \langle term \rangle \space \texttt{"/"} \space \langle factor \rangle  \\
