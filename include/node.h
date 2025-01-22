@@ -24,6 +24,13 @@ struct NodeExpr {
     std::vector<std::variant<NodeFactor*, Token>> val_list;
 };
 
+
+struct NodeIf {
+    NodeExpr* expr;
+    NodeScope* scope;
+};
+
+
 struct NodePrint {
     NodeExpr* expr;
     bool is_println;
@@ -35,7 +42,7 @@ struct NodeDeclaration {
 };
 
 struct NodeStmt {
-    std::variant<NodePrint*, NodeDeclaration*, NodeScope*> stmt;
+    std::variant<NodePrint*, NodeDeclaration*, NodeScope*, NodeIf*> stmt;
 };
 
 struct NodeStmtList {

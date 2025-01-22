@@ -146,6 +146,24 @@ std::optional<NodeScope*> Parser::parse_scope() {
 	return scope;
 }
 
+std::optional<NodeIf*> Parser::parse_if() {
+	if (!peek().has_value() || peek().value().type != TokenType::IF) return std::nullopt;
+
+	auto* if_node = new NodeIf();
+
+	consume();
+
+	auto expr = parse_expr();
+
+	if_node->expr = expr;
+
+	auto scope = parse_scope();
+
+	if_node->scope = scope.value();
+
+	return if_node;
+}
+
 
 NodeExpr* Parser::parse_expr() {
 	auto* expr = new NodeExpr();
