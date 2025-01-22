@@ -35,6 +35,14 @@ std::vector<Token> Scanner::scan() {
                 tokens.push_back(Token({TokenType::STAR}));
             break;
 
+            case '{': 
+                tokens.push_back(Token({TokenType::LEFT_CURLY}));
+                break;
+            
+            case '}':
+                tokens.push_back(Token({TokenType::RIGHT_CURLY}));
+                break;
+
             case '/': {
                 if (peek().has_value() && peek().value() == '/') { //single line comment
                     consume();

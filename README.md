@@ -1,7 +1,7 @@
 # Virgo Compiler
 
 Work in progress:
-**Variables**
+**Scope**
 
 ## Grammar
 
