@@ -2,14 +2,13 @@
 // let y = 12;
 
 
-{
+if 1 {
     let z = 12;
     {
         let x = z + 5;
         println(x);
     }
 
-    println(x);
 }
 //println(z);
 // println(y  + x); 

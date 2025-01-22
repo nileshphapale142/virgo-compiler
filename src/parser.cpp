@@ -47,6 +47,11 @@ std::optional<NodeStmt*> Parser::parse_stmt() {
 		return stmt;
 	}
 
+	if (auto if_stmt = parse_if()) {
+		stmt->stmt = if_stmt.value();
+		return stmt;
+	}
+
 	return std::nullopt;
 };
 
