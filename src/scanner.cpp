@@ -50,7 +50,7 @@ std::vector<Token> Scanner::scan() {
                         consume();
                     }
                     consume();
-                } else if ( // mulit-line comment
+                } else if ( // multi-line comment
                     peek().has_value() && 
                     peek().value() == '*' && 
                     peek(1).has_value() && 
@@ -128,6 +128,8 @@ std::vector<Token> Scanner::scan() {
                         tokens.push_back(Token({TokenType::PRINTLN}));
                     } else if (token == "let") {
                         tokens.push_back(Token({TokenType::LET}));
+                    } else if (token == "if") {
+                        tokens.push_back(Token({TokenType::IF}));
                     }
                     else {
                         tokens.push_back(Token({TokenType::IDENTIFIER, token}));
