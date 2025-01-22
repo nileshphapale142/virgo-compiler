@@ -1,6 +1,10 @@
-let x = 1;
-let y = 12;
-/**println(x);
-println(y);
-println(12 / 4);**/
-println(y  + x); 
+// let x = 1;
+// let y = 12;
+
+
+{
+    let z = 12;
+    println(z);
+}
+
+// println(y  + x); 

@@ -4,6 +4,10 @@
 #include <variant>
 #include "token.h"
 
+struct NodePrint;
+struct NodeDeclaration;
+struct NodeScope;
+
 
 struct NodeIdentifier {
     Token name;
@@ -32,13 +36,20 @@ struct NodeDeclaration {
 };
 
 struct NodeStmt {
-    std::variant<NodePrint, NodeDeclaration> stmt;
+    std::variant<NodePrint, NodeDeclaration, NodeScope> stmt;
 };
 
 struct NodeStmtList {
     std::vector<NodeStmt> stmts;
 };
 
+
+struct NodeScope {
+    NodeStmtList stmt_list;
+};
+
 struct NodeProgram {
     NodeStmtList stmt_list;
 };
+
+

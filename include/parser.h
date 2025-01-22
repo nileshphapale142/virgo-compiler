@@ -17,6 +17,7 @@ private:
     std::optional<NodeStmt> parse_stmt();
     std::optional<NodePrint> parse_print();
     std::optional<NodeDeclaration> parse_declaration();
+    std::optional<NodeScope> parse_scope();
     NodeExpr parse_expr();
     std::optional<NodeTerm> parse_term();
     std::optional<NodeFactor> parse_factor();

@@ -116,6 +116,28 @@ std::optional<NodeDeclaration> Parser::parse_declaration() {
 }
 
 
+
+std::optional<NodeScope> Parser::parse_scope() {
+	if (!peek().has_value() || peek().value().type != TokenType::LEFT_CURLY) return std::nullopt;
+
+	consume();
+
+	NodeScope scope;
+
+	NodeStmtList stmt_list = parse_stmt_list();
+
+	scope.stmt_list = stmt_list;
+
+
+	if (!peek().has_value() || peek().value().type != TokenType::RIGHT_CURLY) {
+		std::cerr << "Expected  '}'" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	consume();
+}
+
+
 NodeExpr Parser::parse_expr() {
 	NodeExpr expr;
 
