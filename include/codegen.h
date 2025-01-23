@@ -35,7 +35,8 @@ class CodeGenerator {
 		
 		NodeProgram* root;
 		buffer output_code;
-		int label_cnt; 		
+		int label_cnt;
+		int if_stmt_cnt = 0;
 
 		std::vector<std::string> vars;
 };

@@ -64,7 +64,7 @@ void CodeGenerator::handle_stmt(const NodeStmt *stmt) {
 }
 
 void CodeGenerator::handle_scope(const NodeScope *scope) {
-	int scope_begin_var_size = -1;
+	size_t scope_begin_var_size = -1;
 
 	for (const auto stmt : scope->stmt_list->stmts) {
 		if (std::holds_alternative<NodeDeclaration*>(stmt->stmt)) {
@@ -89,7 +89,16 @@ void CodeGenerator::handle_scope(const NodeScope *scope) {
 }
 
 void CodeGenerator::handle_if(const NodeIf *if_node) {
-	//todo: implement if statement
+	++if_stmt_cnt;
+
+	handle_expr(if_node->expr);
+
+	output_code.start << "	cmp rax, 0\n";
+	output_code.start << "	je if_end" << if_stmt_cnt << "\n";
+
+	handle_scope(if_node->scope);
+
+	output_code.start << "if_end" << if_stmt_cnt << ":\n";
 }
 
 void CodeGenerator::handle_print(const NodePrint *print_node) {
@@ -131,6 +140,16 @@ void CodeGenerator::handle_print(const NodePrint *print_node) {
 }
 
 void CodeGenerator::handle_declaration(const NodeDeclaration *decl) {
+	auto itr = std::ranges::find_if(vars.begin(), vars.end(), [&](const std::string& var) {
+		return var == decl->ident->name.value.value();
+	});
+
+	if (itr != vars.end()) {
+		std::cerr << "Identifier " << decl->ident->name.value.value() << " already declared" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+
 	handle_expr(decl->expr);
 
 	output_code.start << "	push rax\n";
