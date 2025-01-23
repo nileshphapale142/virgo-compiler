@@ -74,6 +74,8 @@ void CodeGenerator::handle_scope(const NodeScope *scope) {
 			handle_print(std::get<NodePrint*>(stmt->stmt));
 		} else if (std::holds_alternative<NodeScope*>(stmt->stmt)) {
 			handle_scope(std::get<NodeScope*>(stmt->stmt));
+		} else if (std::holds_alternative<NodeIf*>(stmt->stmt)) {
+			handle_if(std::get<NodeIf*>(stmt->stmt));
 		} else {
 			std::cerr << "Unknown statement type" << std::endl;
 			exit(EXIT_FAILURE);
@@ -91,20 +93,22 @@ void CodeGenerator::handle_scope(const NodeScope *scope) {
 void CodeGenerator::handle_if(const NodeIf *if_node) {
 	++if_stmt_cnt;
 
+	int curr_cnt = if_stmt_cnt;
+
 	handle_expr(if_node->expr);
 
 	output_code.start << "	cmp rax, 0\n";
-	output_code.start << "	je if_end" << if_stmt_cnt << "\n";
+	output_code.start << "	je if_end" << curr_cnt << "\n";
 
 	handle_scope(if_node->scope);
 
-	output_code.start << "if_end" << if_stmt_cnt << ":\n";
+	output_code.start << "if_end" << curr_cnt << ":\n";
 }
 
-void CodeGenerator::handle_print(const NodePrint *print_node) {
+void CodeGenerator::handle_print(const NodePrint *node) {
 	++label_cnt;
 
-	handle_expr(print_node->expr);
+	handle_expr(node->expr);
 
 	output_code.start << "	lea rdi, [print_str + 19]\n";
 	output_code.start << "	mov r8, rdi\n";
@@ -113,7 +117,7 @@ void CodeGenerator::handle_print(const NodePrint *print_node) {
 	output_code.start << "	sub rdx, rdi\n";
 	output_code.start << "	inc rdx\n";
 
-	if (print_node->is_println) {
+	if (node->is_println) {
 		output_code.start << "	mov byte [r8 + 1], 10\n";
 		output_code.start << "	inc rdx\n";
 	}

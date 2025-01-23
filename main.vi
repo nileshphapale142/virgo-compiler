@@ -1,14 +1,14 @@
-let x = 1;
+//let x = 1;
 let y = 12;
 
 
-if y - 12 {
+if y {
     let z = 12;
-    {
+    if z - y {
         let x = z + 5;
         println(x);
     }
-
+    println(z);
 }
-//println(z);
+println(z);
 //println(y  + x);
