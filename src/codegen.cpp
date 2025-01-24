@@ -55,9 +55,9 @@ void CodeGenerator::handle_stmt(const NodeStmt *stmt) {
 		handle_print(std::get<NodePrint*>(stmt->stmt));
 	} else if (std::holds_alternative<NodeScope*>(stmt->stmt)) {
 		handle_scope(std::get<NodeScope*>(stmt->stmt));
-	} else if (std::holds_alternative<NodeIf*>(stmt->stmt)) {
-		handle_if(std::get<NodeIf*>(stmt->stmt));
-	}else {
+	} else if (std::holds_alternative<NodeCondition*>(stmt->stmt)) {
+		handle_condition(std::get<NodeCondition*>(stmt->stmt));
+	} else {
 		std::cerr << "Unknown statement type" << std::endl;
 		exit(EXIT_FAILURE);
 	}
@@ -74,8 +74,8 @@ void CodeGenerator::handle_scope(const NodeScope *scope) {
 			handle_print(std::get<NodePrint*>(stmt->stmt));
 		} else if (std::holds_alternative<NodeScope*>(stmt->stmt)) {
 			handle_scope(std::get<NodeScope*>(stmt->stmt));
-		} else if (std::holds_alternative<NodeIf*>(stmt->stmt)) {
-			handle_if(std::get<NodeIf*>(stmt->stmt));
+		} else if (std::holds_alternative<NodeCondition*>(stmt->stmt)) {
+			handle_condition(std::get<NodeCondition*>(stmt->stmt));
 		} else {
 			std::cerr << "Unknown statement type" << std::endl;
 			exit(EXIT_FAILURE);
@@ -90,20 +90,53 @@ void CodeGenerator::handle_scope(const NodeScope *scope) {
 	}
 }
 
-void CodeGenerator::handle_if(const NodeIf *if_node) {
+void CodeGenerator::handle_condition(const NodeCondition* condition) {
 	++if_stmt_cnt;
 
-	int curr_cnt = if_stmt_cnt;
+	const int cond_cnt = if_stmt_cnt;
+	handle_if(condition->if_cond, cond_cnt);
 
+	if (condition->elif_cond.has_value()) {
+		for (const auto elif_cond : condition->elif_cond.value()) {
+			handle_elif(elif_cond, cond_cnt);
+		}
+	}
+
+	if (condition->else_cond.has_value()) {
+		handle_else(condition->else_cond.value());
+	}
+
+	output_code.start << "cond_end_" << cond_cnt << ":\n";
+}
+
+void CodeGenerator::handle_if(const NodeIf *if_node, const int cond_cnt) {
 	handle_expr(if_node->expr);
 
 	output_code.start << "	cmp rax, 0\n";
-	output_code.start << "	je if_end" << curr_cnt << "\n";
+	output_code.start << "	je if_end_" << cond_cnt << "\n";
 
 	handle_scope(if_node->scope);
 
-	output_code.start << "if_end" << curr_cnt << ":\n";
+	output_code.start << "jmp cond_end_" << cond_cnt<< "\n";
+	output_code.start << "if_end_" << cond_cnt << ":\n";
 }
+
+void CodeGenerator::handle_elif(const NodeElif *elif_node,  const int cond_cnt) {
+	handle_expr(elif_node->expr);
+
+	output_code.start << "	cmp rax, 0\n";
+	output_code.start << "	je elif_end_" << cond_cnt << "\n";
+
+	handle_scope(elif_node->scope);
+
+	output_code.start << "jmp cond_end_" << cond_cnt<< "\n";
+	output_code.start << "elif_end_" << cond_cnt << ":\n";
+}
+
+void CodeGenerator::handle_else(const NodeElse *else_node) {
+	handle_scope(else_node->scope);
+}
+
 
 void CodeGenerator::handle_print(const NodePrint *node) {
 	++label_cnt;

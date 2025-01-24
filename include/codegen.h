@@ -23,7 +23,10 @@ class CodeGenerator {
 		void handle_print(const NodePrint *node);
 		void handle_declaration(const NodeDeclaration *decl);
 		void handle_scope(const NodeScope *scope);
-		void handle_if(const NodeIf *if_node);
+		void handle_condition(const NodeCondition *condition);
+		void handle_if(const NodeIf *if_node, int cond_cnt);
+		void handle_elif(const NodeElif *elif_node, int cond_cnt);
+		void handle_else(const NodeElse *else_node);
 		void handle_expr(const NodeExpr *expr);
 		void handle_factor(const NodeFactor *factor);
 

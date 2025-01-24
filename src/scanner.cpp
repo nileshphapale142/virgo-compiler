@@ -130,6 +130,10 @@ std::vector<Token> Scanner::scan() {
                         tokens.push_back(Token({TokenType::LET}));
                     } else if (token == "if") {
                         tokens.push_back(Token({TokenType::IF}));
+                    } else if (token == "elif") {
+                        tokens.push_back(Token({TokenType::ELIF}));
+                    } else if (token == "else") {
+                        tokens.push_back(Token({TokenType::ELSE}));
                     }
                     else {
                         tokens.push_back(Token({TokenType::IDENTIFIER, token}));

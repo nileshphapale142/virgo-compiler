@@ -2,13 +2,25 @@
 let y = 12;
 
 
-if y {
+if 0 {
     let z = 12;
-    if z - y {
+
+    if z - y  {
         let x = z + 5;
         println(x);
     }
-    println(z);
+    elif 0 {
+        println(z);
+    } else {
+        println(32);
+    }
+    //println(z);
 }
-//println(z);
-//println(y  + x);
+elif 0 {
+    println(123);
+}
+
+let xyz = 213;
+
+println(xyz);
+

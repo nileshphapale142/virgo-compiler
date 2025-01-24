@@ -47,8 +47,8 @@ std::optional<NodeStmt*> Parser::parse_stmt() {
 		return stmt;
 	}
 
-	if (auto if_stmt = parse_if()) {
-		stmt->stmt = if_stmt.value();
+	if (auto cond_stmt = parse_condition()) {
+		stmt->stmt = cond_stmt.value();
 		return stmt;
 	}
 
@@ -151,6 +151,34 @@ std::optional<NodeScope*> Parser::parse_scope() {
 	return scope;
 }
 
+
+std::optional<NodeCondition*> Parser::parse_condition() {
+
+	const auto if_cond = parse_if();
+
+	if (!if_cond) return std::nullopt;
+
+	auto condition = new NodeCondition();
+
+	condition->if_cond = if_cond.value();
+
+	std::vector<NodeElif*> elif_nodes;
+
+	while (const auto elif_cond = parse_elif()) {
+		elif_nodes.push_back(elif_cond.value());
+	}
+
+	if (!elif_nodes.empty()) {
+		condition->elif_cond = std::move(elif_nodes);
+	}
+
+	if (const auto else_cond = parse_else()) {
+		condition->else_cond = else_cond.value();
+	}
+
+	return condition;
+}
+
 std::optional<NodeIf*> Parser::parse_if() {
 	if (!peek().has_value() || peek().value().type != TokenType::IF) return std::nullopt;
 
@@ -158,16 +186,55 @@ std::optional<NodeIf*> Parser::parse_if() {
 
 	consume();
 
-	auto expr = parse_expr();
+	if_node->expr = parse_expr();
 
-	if_node->expr = expr;
-
-	auto scope = parse_scope();
-
-	if_node->scope = scope.value();
+	if (const auto scope = parse_scope()) {
+		if_node->scope = scope.value();
+	} else {
+		std::cerr << "Missing '{'" << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
 	return if_node;
 }
+
+
+std::optional<NodeElif*> Parser::parse_elif() {
+	if (!peek().has_value() || peek().value().type != TokenType::ELIF) return std::nullopt;
+
+	auto* elif_node = new NodeElif();
+
+	consume();
+
+	elif_node->expr = parse_expr();
+
+	if (const auto scope = parse_scope()) {
+		elif_node->scope = scope.value();
+	} else {
+		std::cerr << "Missing '{'" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	return elif_node;
+}
+
+std::optional<NodeElse*> Parser::parse_else() {
+	if (!peek().has_value() || peek().value().type != TokenType::ELSE) return std::nullopt;
+
+	consume();
+
+	auto *else_node = new NodeElse();
+
+	if (const auto scope = parse_scope()) {
+		else_node->scope = scope.value();
+	} else {
+		std::cerr << "Missing '{'" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	return else_node;
+}
+
 
 
 NodeExpr* Parser::parse_expr() {
