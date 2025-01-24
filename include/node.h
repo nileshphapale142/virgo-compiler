@@ -30,6 +30,20 @@ struct NodeIf {
     NodeScope* scope;
 };
 
+struct NodeElif {
+    NodeExpr* expr;
+    NodeScope* scope;
+};
+
+struct NodeElse {
+    NodeExpr* expr;
+};
+
+struct NodeCondition {
+    NodeIf* if_cond;
+    std::vector<NodeElif*> elif_cond;
+    NodeElse* else_cond;
+};
 
 struct NodePrint {
     NodeExpr* expr;

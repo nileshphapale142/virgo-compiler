@@ -10,5 +10,5 @@ if y {
     }
     println(z);
 }
-println(z);
+//println(z);
 //println(y  + x);
