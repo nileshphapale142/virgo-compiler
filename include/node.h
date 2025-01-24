@@ -39,7 +39,7 @@ struct NodeElse {
 };
 
 struct NodeCondition {
-    NodeIf* if_cond;
+    NodeIf* if_cond{};
     std::optional<std::vector<NodeElif*>> elif_cond;
     std::optional<NodeElse*> else_cond;
 };
@@ -54,8 +54,13 @@ struct NodeDeclaration {
     NodeExpr* expr;
 };
 
+struct NodeAssignment {
+    NodeIdentifier* ident;
+    NodeExpr* expr;
+};
+
 struct NodeStmt {
-    std::variant<NodePrint*, NodeDeclaration*, NodeScope*, NodeCondition*> stmt;
+    std::variant<NodePrint*, NodeDeclaration*, NodeAssignment*, NodeScope*, NodeCondition*> stmt;
 };
 
 struct NodeStmtList {
