@@ -51,6 +51,8 @@ void CodeGenerator::handle_stmt_list(const NodeStmtList *stmt_list) {
 void CodeGenerator::handle_stmt(const NodeStmt *stmt) {
 	if (std::holds_alternative<NodeDeclaration*>(stmt->stmt)) {
 		handle_declaration(std::get<NodeDeclaration*>(stmt->stmt));
+	} else if (std::holds_alternative<NodeAssignment*>(stmt->stmt)) {
+		handle_assignment(std::get<NodeAssignment*>(stmt->stmt));
 	} else if(std::holds_alternative<NodePrint*>(stmt->stmt)) {
 		handle_print(std::get<NodePrint*>(stmt->stmt));
 	} else if (std::holds_alternative<NodeScope*>(stmt->stmt)) {
@@ -70,6 +72,8 @@ void CodeGenerator::handle_scope(const NodeScope *scope) {
 		if (std::holds_alternative<NodeDeclaration*>(stmt->stmt)) {
 			scope_begin_var_size = (scope_begin_var_size == -1 ? vars.size() : scope_begin_var_size);
 			handle_declaration(std::get<NodeDeclaration*>(stmt->stmt));
+		} else if (std::holds_alternative<NodeAssignment*>(stmt->stmt)) {
+			handle_assignment(std::get<NodeAssignment*>(stmt->stmt));
 		} else if (std::holds_alternative<NodePrint*>(stmt->stmt)) {
 			handle_print(std::get<NodePrint*>(stmt->stmt));
 		} else if (std::holds_alternative<NodeScope*>(stmt->stmt)) {
@@ -177,7 +181,7 @@ void CodeGenerator::handle_print(const NodePrint *node) {
 }
 
 void CodeGenerator::handle_declaration(const NodeDeclaration *decl) {
-	auto itr = std::ranges::find_if(vars.begin(), vars.end(), [&](const std::string& var) {
+	const auto itr = std::ranges::find_if(vars.begin(), vars.end(), [&](const std::string& var) {
 		return var == decl->ident->name.value.value();
 	});
 
@@ -186,12 +190,29 @@ void CodeGenerator::handle_declaration(const NodeDeclaration *decl) {
 		exit(EXIT_FAILURE);
 	}
 
-
 	handle_expr(decl->expr);
 
 	output_code.start << "	push rax\n";
 
 	vars.push_back(decl->ident->name.value.value());
+}
+
+
+void CodeGenerator::handle_assignment(const NodeAssignment *assign) {
+	const auto itr = std::ranges::find_if(vars.begin(), vars.end(), [&](const std::string& var) {
+		return var == assign->ident->name.value.value();
+	});
+
+	if (itr == vars.end()) {
+		std::cerr << "Identifier " << assign->ident->name.value.value() << " does not exist" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	handle_expr(assign->expr);
+
+	const size_t index = vars.size() - 1 - std::distance(vars.begin(), itr);
+
+	output_code.start << "	mov [rsp + " << index * 8 << "], rax\n";
 }
 
 void CodeGenerator::handle_expr(const NodeExpr *expr) {
@@ -209,7 +230,7 @@ void CodeGenerator::handle_expr(const NodeExpr *expr) {
 			output_code.start << "\t" <<  operation << " rax, rbx\n";
 
 		} else if (std::holds_alternative<Token>(val)) {
-			Token token = std::get<Token>(val);
+			auto token = std::get<Token>(val);
 			
 			if (token.type != TokenType::PLUS && token.type != TokenType::MINUS) {
 				std::cerr << "Unexpected token" << std::endl;
@@ -217,7 +238,7 @@ void CodeGenerator::handle_expr(const NodeExpr *expr) {
 			}
 
 			if (token.type == TokenType::PLUS) operation = "add";
-			else if (token.type == TokenType::MINUS) operation = "sub";
+			else  operation = "sub";
 		}
 	}
 }
@@ -260,7 +281,7 @@ void CodeGenerator::handle_factor(const NodeFactor *factor) {
 					exit(EXIT_FAILURE);
 				}
 
-				int index = vars.size() - 1 - std::distance(vars.begin(), itr);
+				const size_t index = vars.size() - 1 - std::distance(vars.begin(), itr);
 
 				if (is_mul) {
 					output_code.start << "	mov rcx, [rsp + " << index * 8 << "]\n";
@@ -278,10 +299,10 @@ void CodeGenerator::handle_factor(const NodeFactor *factor) {
 
 
 		} else if (std::holds_alternative<Token>(val)) {
-			const Token token = std::get<Token>(val); 
+			const auto [type, value] = std::get<Token>(val); 
 
-			if (token.type == TokenType::STAR) is_mul = true;
-			else if (token.type == TokenType::BACKWARD_SLASH) is_mul = false;
+			if (type == TokenType::STAR) is_mul = true;
+			else if (type == TokenType::BACKWARD_SLASH) is_mul = false;
 		}
 	}
 }
