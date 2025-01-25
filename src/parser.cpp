@@ -42,6 +42,11 @@ std::optional<NodeStmt*> Parser::parse_stmt() {
 		return stmt;
 	}
 
+	if (auto assign_stmt = parse_assignment()) {
+		stmt->stmt = assign_stmt.value();
+		return stmt;
+	}
+
 	if (auto scope = parse_scope()) {
 		stmt->stmt = scope.value();
 		return stmt;
@@ -126,6 +131,33 @@ std::optional<NodeDeclaration *> Parser::parse_declaration() {
 	consume();
 
 	return decl;
+}
+
+
+std::optional<NodeAssignment* > Parser::parse_assignment() {
+	if (!peek().has_value() || peek().value().type != TokenType::IDENTIFIER) return std::nullopt;
+
+	auto* assign = new NodeAssignment();
+
+	assign->ident = new NodeIdentifier(consume().value());
+
+	if (!peek().has_value() || peek().value().type != TokenType::EQUAL) {
+		std::cerr << "Expected = sign" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	consume();
+
+	assign->expr = parse_expr();
+
+	if (!peek().has_value() || peek().value().type != TokenType::SEMICOLON) {
+		std::cerr << "Expected ;" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	consume();
+
+	return assign;
 }
 
 
@@ -285,12 +317,10 @@ std::optional<NodeTerm*> Parser::parse_term() {
 		}
 		
 		return term;
-	} else {
-		std::cerr << "Expected an unsigned integer or an identifier" << std::endl;
-		exit(EXIT_FAILURE);
 	}
 
-	return std::nullopt;
+	std::cerr << "Expected an unsigned integer or an identifier" << std::endl;
+	exit(EXIT_FAILURE);
 }
 
 std::optional<Token> Parser::peek() {
