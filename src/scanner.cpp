@@ -91,8 +91,22 @@ std::vector<Token> Scanner::scan() {
             break;
 
 
-            case '=':
-                tokens.push_back(Token({TokenType::EQUAL}));
+            case '=': {
+                if (peek().has_value() && peek().value() == '=') {
+                    consume();
+                    tokens.push_back(Token({TokenType::DOUBLE_EQUAL}));
+                } else {
+                    tokens.push_back(Token({TokenType::EQUAL}));
+                }
+            }
+                break;
+
+            case '<':
+                tokens.push_back(Token({TokenType::LESS_THAN}));
+                break;
+
+            case '>':
+                tokens.push_back(Token({TokenType::GREATER_THAN}));
                 break;
             
             case ' ':

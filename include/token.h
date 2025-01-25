@@ -7,7 +7,9 @@ enum class TokenType {
     // Single-character tokens
     LEFT_PAREN, RIGHT_PAREN, SEMICOLON, 
     PLUS, MINUS, STAR, BACKWARD_SLASH, EQUAL,
-    LEFT_CURLY, RIGHT_CURLY,
+    LEFT_CURLY, RIGHT_CURLY, LESS_THAN, GREATER_THAN,
+    // Double-character tokens
+    DOUBLE_EQUAL,
     // Literals
     INTEGER,
     
