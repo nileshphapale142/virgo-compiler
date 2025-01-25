@@ -1,8 +1,8 @@
  # Virgo Compiler
 
 Work in progress:
-**Variable Assigment**
-  
+**Comparision in condition**
+
 ## Grammar
 
 $$
@@ -15,17 +15,18 @@ $$
     \langle declaration \rangle & ::= & \texttt{"let"} \space \langle identifier \rangle \texttt{"="} \langle expr \rangle \texttt{";"}   \\
     \langle assignment \rangle  &::= & \langle identifier \rangle \space \texttt{"="} \space \langle expr \rangle \texttt{";"}\\
     \langle condition \rangle & ::= & \langle if \rangle \space \langle elif-chain \rangle  \space \langle else \rangle \\
-    \langle if \rangle & ::= & \texttt{"if"} \space \langle expr \rangle \space \langle scope \rangle\\
+    \langle if \rangle & ::= & \texttt{"if"} \space   \langle bool\_expr \rangle \space \langle scope \rangle\\
     \langle elif-chain \rangle & ::= & \epsilon \space | 
   \space \langle elif \rangle \langle elif-chain \rangle \\
-    \langle elif \rangle & ::= & \texttt{"elif"} \space \langle expr \rangle \space \langle scope \rangle\\
+    \langle elif \rangle & ::= & \texttt{"elif"} \space \langle bool\_expr \rangle \space \langle scope \rangle\\
     \langle else \rangle & ::= & \epsilon \space | \space \texttt{"else"} \space \langle scope \rangle\\
    \langle scope \rangle & ::= & \texttt{"\{"} \langle stmt-list \rangle \texttt{"\}"}\\
+   \langle bool\_expr \rangle & ::= & \langle expr \rangle \space | \space \langle expr \rangle \langle comp\_operator \rangle \langle expr \rangle \\
     \langle expr \rangle & ::= & \langle factor \rangle  \space | \space \langle factor \rangle \space \texttt{"+"} \space \langle expr \rangle \space | \space \langle factor \rangle \space \texttt{"-"} \space \langle expr \rangle \\
     \langle factor \rangle & ::= & \langle term \rangle \space | \space \langle term \rangle \space \texttt{"*"} \space  \langle factor \rangle  \space | \space \langle term \rangle \space \texttt{"/"} \space \langle factor \rangle  \\
     \langle term \rangle & ::= &  \langle identifier \rangle \space | \space \text{unsigned\_integer\_literal} \\
     \langle identifier \rangle & ::= & \langle letter \rangle (\space \langle letter \rangle \space | \space \langle digit \rangle \space)^* \\
-    
+    \langle comp\_operator \rangle & ::= & \texttt{"=="} \space | \space \texttt{"<"}  \space | \space \texttt{">"}\\
     \langle comment \rangle & ::= & \texttt{"//"} \langle any-character-except-new-line \rangle  ^* \space | \space \texttt{"/**"} \langle any-character \rangle^* \texttt{"**/"}\\
 
     \langle letter \rangle & ::= & \texttt{"a"} \space |\space \texttt{"b"} \space |\space \texttt{"c"} \space |\space \texttt{"d"} \space |\space \texttt{"e"} \space |\space \texttt{"f"} \space |\space \texttt{"g"} \space |\space \texttt{"h"} \space |\space \texttt{"i"} \space |\space \texttt{"j"} \space |\space \texttt{"k"} \space |\space \texttt{"l"} \space |\space \texttt{"m"} \space |\space \texttt{"n"} \space |\space \texttt{"o"} \space |\space \texttt{"p"} \space |\space \texttt{"q"} \space |\space \texttt{"r"} \space |\space \texttt{"s"} \space |\space \texttt{"t"} \space |\space \texttt{"u"} \space |\space \texttt{"v"} \space |\space \texttt{"w"} \space |\space \texttt{"x"} \space |\space \texttt{"y"} \space |\space \texttt{"z"}
