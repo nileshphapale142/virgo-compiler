@@ -26,7 +26,7 @@ $$
     \langle factor \rangle & ::= & \langle term \rangle \space | \space \langle term \rangle \space \texttt{"*"} \space  \langle factor \rangle  \space | \space \langle term \rangle \space \texttt{"/"} \space \langle factor \rangle  \\
     \langle term \rangle & ::= &  \langle identifier \rangle \space | \space \text{unsigned\_integer\_literal} \\
     \langle identifier \rangle & ::= & \langle letter \rangle (\space \langle letter \rangle \space | \space \langle digit \rangle \space)^* \\
-    \langle comp\_operator \rangle & ::= & \texttt{"=="} \space | \space \texttt{"<"}  \space | \space \texttt{">"}\\
+    \langle comp\_operator \rangle & ::= & \texttt{"=="} \space | \space \texttt{"!="} \space |  \space \texttt{"<"}  \space | \space \texttt{">"} | \space \texttt{"<="} \space | \space \texttt{">="} \space\\
     \langle comment \rangle & ::= & \texttt{"//"} \langle any-character-except-new-line \rangle  ^* \space | \space \texttt{"/**"} \langle any-character \rangle^* \texttt{"**/"}\\
 
     \langle letter \rangle & ::= & \texttt{"a"} \space |\space \texttt{"b"} \space |\space \texttt{"c"} \space |\space \texttt{"d"} \space |\space \texttt{"e"} \space |\space \texttt{"f"} \space |\space \texttt{"g"} \space |\space \texttt{"h"} \space |\space \texttt{"i"} \space |\space \texttt{"j"} \space |\space \texttt{"k"} \space |\space \texttt{"l"} \space |\space \texttt{"m"} \space |\space \texttt{"n"} \space |\space \texttt{"o"} \space |\space \texttt{"p"} \space |\space \texttt{"q"} \space |\space \texttt{"r"} \space |\space \texttt{"s"} \space |\space \texttt{"t"} \space |\space \texttt{"u"} \space |\space \texttt{"v"} \space |\space \texttt{"w"} \space |\space \texttt{"x"} \space |\space \texttt{"y"} \space |\space \texttt{"z"}
