@@ -101,11 +101,21 @@ std::vector<Token> Scanner::scan() {
             }
                 break;
             case '<':
-                tokens.push_back(Token({TokenType::LESS_THAN}));
+                if (peek().has_value() && peek().value() == '=') {
+                    consume();
+                    tokens.push_back(Token({TokenType::LESS_EQUAL}));
+                } else {
+                    tokens.push_back(Token({TokenType::LESS_THAN}));
+                }
                 break;
 
             case '>':
-                tokens.push_back(Token({TokenType::GREATER_THAN}));
+                if (peek().has_value() && peek().value() == '=') {
+                    consume();
+                    tokens.push_back(Token({TokenType::GREATER_EQUAL}));
+                } else {
+                    tokens.push_back(Token({TokenType::GREATER_THAN}));
+                }
                 break;
             
             case ' ':
