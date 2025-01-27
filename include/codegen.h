@@ -26,16 +26,16 @@ class CodeGenerator {
 		void handle_scope(const NodeScope *scope);
 		void handle_condition(const NodeCondition *condition);
 		void handle_if(const NodeIf *if_node, int cond_cnt);
-		void handle_elif(const NodeElif *elif_node, int cond_cnt);
+		void handle_elif(const NodeElif *elif_node, int cond_cnt, int elif_cnt);
 		void handle_else(const NodeElse *else_node);
 		void handle_expr(const NodeExpr *expr);
+		void handle_bool_expr(const NodeBoolExpr *bool_expr, const std::string &jmp_to);
 		void handle_factor(const NodeFactor *factor);
 
 		void collect_section_data(const NodeStmtList *stmt_list);
 		void collect_section_bss(const NodeStmtList *stmt_list);
 		
 		void add_exit_code();
-		
 		
 		NodeProgram* root;
 		buffer output_code;

@@ -11,13 +11,54 @@ _start:
 	push rax
 	mov rax, 0
 	mov rbx, 1
-	mov rcx, 20
+	mov rcx, [rsp + 0]
 	imul rbx, rcx
 	add rax, rbx
-	mov [rsp + 0], rax
+	push rax
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 5
+	imul rbx, rcx
+	add rax, rbx
+	mov rbx, rax
+	pop rax
+	cmp rax, rbx
+	jne if_end_1
 	mov rax, 0
 	mov rbx, 1
 	mov rcx, [rsp + 0]
+	imul rbx, rcx
+	add rax, rbx
+	mov rbx, 1
+	mov rcx, 1
+	imul rbx, rcx
+	sub rax, rbx
+	push rax
+	mov rbx, 0
+	pop rax
+	cmp rax, rbx
+	je if_end_2
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 0
+	imul rbx, rcx
+	add rax, rbx
+	lea rdi, [print_str + 19]
+	mov r8, rdi
+	call itoa
+	mov rdx, r8
+	sub rdx, rdi
+	inc rdx
+	mov rax, 1
+	mov rsi, rdi
+	mov rdi, 1
+	syscall
+jmp cond_end_2
+if_end_2:
+cond_end_2:
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 1
 	imul rbx, rcx
 	add rax, rbx
 	lea rdi, [print_str + 19]
@@ -32,6 +73,77 @@ _start:
 	mov rsi, rdi
 	mov rdi, 1
 	syscall
+jmp cond_end_1
+if_end_1:
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, [rsp + 0]
+	imul rbx, rcx
+	add rax, rbx
+	push rax
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 5
+	imul rbx, rcx
+	add rax, rbx
+	mov rbx, rax
+	pop rax
+	cmp rax, rbx
+	jle elif_end_1_1
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 2
+	imul rbx, rcx
+	add rax, rbx
+	lea rdi, [print_str + 19]
+	mov r8, rdi
+	call itoa
+	mov rdx, r8
+	sub rdx, rdi
+	inc rdx
+	mov byte [r8 + 1], 10
+	inc rdx
+	mov rax, 1
+	mov rsi, rdi
+	mov rdi, 1
+	syscall
+jmp cond_end_1
+elif_end_1_1:
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, [rsp + 0]
+	imul rbx, rcx
+	add rax, rbx
+	push rax
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 5
+	imul rbx, rcx
+	add rax, rbx
+	mov rbx, rax
+	pop rax
+	cmp rax, rbx
+	jge elif_end_1_2
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 3
+	imul rbx, rcx
+	add rax, rbx
+	lea rdi, [print_str + 19]
+	mov r8, rdi
+	call itoa
+	mov rdx, r8
+	sub rdx, rdi
+	inc rdx
+	mov byte [r8 + 1], 10
+	inc rdx
+	mov rax, 1
+	mov rsi, rdi
+	mov rdi, 1
+	syscall
+jmp cond_end_1
+elif_end_1_2:
+cond_end_1:
 	mov rax, 60
 	xor rdi, rdi
 	syscall

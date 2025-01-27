@@ -23,6 +23,7 @@ private:
     std::optional<NodeIf*> parse_if();
     std::optional<NodeElif*> parse_elif();
     std::optional<NodeElse*> parse_else();
+    NodeBoolExpr* parse_bool_expr();
     NodeExpr* parse_expr();
     std::optional<NodeTerm*> parse_term();
     std::optional<NodeFactor*> parse_factor();

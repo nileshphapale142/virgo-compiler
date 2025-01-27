@@ -100,7 +100,6 @@ std::vector<Token> Scanner::scan() {
                 }
             }
                 break;
-
             case '<':
                 tokens.push_back(Token({TokenType::LESS_THAN}));
                 break;

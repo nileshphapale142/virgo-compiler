@@ -101,8 +101,9 @@ void CodeGenerator::handle_condition(const NodeCondition* condition) {
 	handle_if(condition->if_cond, cond_cnt);
 
 	if (condition->elif_cond.has_value()) {
-		for (const auto elif_cond : condition->elif_cond.value()) {
-			handle_elif(elif_cond, cond_cnt);
+		for (int i = 0; i < condition->elif_cond.value().size(); i ++) {
+			const auto elif_cond = condition->elif_cond.value().at(i);
+			handle_elif(elif_cond, cond_cnt,  i + 1);
 		}
 	}
 
@@ -114,31 +115,55 @@ void CodeGenerator::handle_condition(const NodeCondition* condition) {
 }
 
 void CodeGenerator::handle_if(const NodeIf *if_node, const int cond_cnt) {
-	handle_expr(if_node->expr);
-
-	output_code.start << "	cmp rax, 0\n";
-	output_code.start << "	je if_end_" << cond_cnt << "\n";
+	const std::string if_end = "if_end_" + std::to_string(cond_cnt);
+	handle_bool_expr(if_node->bool_expr, if_end);
 
 	handle_scope(if_node->scope);
 
 	output_code.start << "jmp cond_end_" << cond_cnt<< "\n";
-	output_code.start << "if_end_" << cond_cnt << ":\n";
+	output_code.start << if_end << ":\n";
 }
 
-void CodeGenerator::handle_elif(const NodeElif *elif_node,  const int cond_cnt) {
-	handle_expr(elif_node->expr);
-
-	output_code.start << "	cmp rax, 0\n";
-	output_code.start << "	je elif_end_" << cond_cnt << "\n";
+void CodeGenerator::handle_elif(const NodeElif *elif_node,  const int cond_cnt, const int elif_cnt) {
+	const std::string elif_end = "elif_end_" + std::to_string(cond_cnt) + "_" + std::to_string(elif_cnt);
+	handle_bool_expr(elif_node->bool_expr, elif_end);
 
 	handle_scope(elif_node->scope);
 
 	output_code.start << "jmp cond_end_" << cond_cnt<< "\n";
-	output_code.start << "elif_end_" << cond_cnt << ":\n";
+	output_code.start << elif_end << ":\n";
 }
 
 void CodeGenerator::handle_else(const NodeElse *else_node) {
 	handle_scope(else_node->scope);
+}
+
+
+void CodeGenerator::handle_bool_expr(const NodeBoolExpr *bool_expr, const std::string &jmp_to) {
+	handle_expr(bool_expr->expr1);
+
+	output_code.start << "	push rax\n";
+
+	std::string jmp_if = "je";
+
+	if (bool_expr->expr2.has_value()) {
+		handle_expr(bool_expr->expr2.value());
+
+		const auto op_type = bool_expr->bool_operator.value().type;
+
+		jmp_if = op_type == TokenType::DOUBLE_EQUAL ? "jne" :
+			(op_type == TokenType::LESS_THAN ? "jge" : "jle");
+
+		output_code.start << "	mov rbx, rax\n";
+	} else {
+		output_code.start << "	mov rbx, 0\n";
+	}
+
+	output_code.start << "	pop rax\n";
+
+	output_code.start << "	cmp rax, rbx\n";
+	output_code.start << "\t" << jmp_if << " " <<  jmp_to<<"\n";
+
 }
 
 
@@ -214,6 +239,7 @@ void CodeGenerator::handle_assignment(const NodeAssignment *assign) {
 
 	output_code.start << "	mov [rsp + " << index * 8 << "], rax\n";
 }
+
 
 void CodeGenerator::handle_expr(const NodeExpr *expr) {
 	output_code.start << "	mov rax, 0\n";

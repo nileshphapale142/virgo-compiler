@@ -183,7 +183,6 @@ std::optional<NodeScope*> Parser::parse_scope() {
 	return scope;
 }
 
-
 std::optional<NodeCondition*> Parser::parse_condition() {
 
 	const auto if_cond = parse_if();
@@ -218,7 +217,7 @@ std::optional<NodeIf*> Parser::parse_if() {
 
 	consume();
 
-	if_node->expr = parse_expr();
+	if_node->bool_expr = parse_bool_expr();
 
 	if (const auto scope = parse_scope()) {
 		if_node->scope = scope.value();
@@ -238,7 +237,7 @@ std::optional<NodeElif*> Parser::parse_elif() {
 
 	consume();
 
-	elif_node->expr = parse_expr();
+	elif_node->bool_expr = parse_bool_expr();
 
 	if (const auto scope = parse_scope()) {
 		elif_node->scope = scope.value();
@@ -265,6 +264,24 @@ std::optional<NodeElse*> Parser::parse_else() {
 	}
 
 	return else_node;
+}
+
+
+NodeBoolExpr* Parser::parse_bool_expr() {
+	auto* bool_expr = new NodeBoolExpr();
+	bool_expr->expr1 = parse_expr();
+
+	if (!peek().has_value() ||
+		(
+			peek().value().type != TokenType::DOUBLE_EQUAL &&
+			peek().value().type != TokenType::GREATER_THAN &&
+			peek().value().type != TokenType::LESS_THAN)) return bool_expr;
+
+	bool_expr->bool_operator = consume().value();
+
+	bool_expr->expr2 = parse_expr();
+
+	return bool_expr;
 }
 
 

@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 
 #include <vector>
 #include <variant>
@@ -24,13 +24,19 @@ struct NodeExpr {
     std::vector<std::variant<NodeFactor*, Token>> val_list;
 };
 
+struct NodeBoolExpr {
+    NodeExpr* expr1;
+    std::optional<Token> bool_operator;
+    std::optional<NodeExpr*> expr2;
+};
+
 struct NodeIf {
-    NodeExpr* expr;
+    NodeBoolExpr* bool_expr;
     NodeScope* scope;
 };
 
 struct NodeElif {
-    NodeExpr* expr;
+    NodeBoolExpr* bool_expr;
     NodeScope* scope;
 };
 
