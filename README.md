@@ -24,7 +24,7 @@ $$
    \langle bool\_expr \rangle & ::= & \langle expr \rangle \space | \space \langle expr \rangle \langle comp\_operator \rangle \langle expr \rangle \\
     \langle expr \rangle & ::= & \langle factor \rangle  \space | \space \langle factor \rangle \space \texttt{"+"} \space \langle expr \rangle \space | \space \langle factor \rangle \space \texttt{"-"} \space \langle expr \rangle \\
     \langle factor \rangle & ::= & \langle term \rangle \space | \space \langle term \rangle \space \texttt{"*"} \space  \langle factor \rangle  \space | \space \langle term \rangle \space \texttt{"/"} \space \langle factor \rangle  \\
-    \langle term \rangle & ::= &  \langle identifier \rangle \space | \space \text{unsigned\_integer\_literal} \\
+    \langle term \rangle & ::= &  \langle identifier \rangle \space | \space \text{integer\_literal} \\
     \langle identifier \rangle & ::= & \langle letter \rangle (\space \langle letter \rangle \space | \space \langle digit \rangle \space)^* \\
     \langle comp\_operator \rangle & ::= & \texttt{"=="} \space | \space \texttt{"!="} \space |  \space \texttt{"<"}  \space | \space \texttt{">"} | \space \texttt{"<="} \space | \space \texttt{">="} \space\\
     \langle comment \rangle & ::= & \texttt{"//"} \langle any-character-except-new-line \rangle  ^* \space | \space \texttt{"/**"} \langle any-character \rangle^* \texttt{"**/"}\\
