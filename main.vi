@@ -1,7 +1,7 @@
 let y = 5;
 
-if y == 5 {
-    if y - 1 {
+if y >= 5 {
+    if y != 5{
         print(0);
     }
     println(1);

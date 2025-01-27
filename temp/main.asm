@@ -23,18 +23,19 @@ _start:
 	mov rbx, rax
 	pop rax
 	cmp rax, rbx
-	jne if_end_1
+	jl if_end_1
 	mov rax, 0
 	mov rbx, 1
 	mov rcx, [rsp + 0]
 	imul rbx, rcx
 	add rax, rbx
-	mov rbx, 1
-	mov rcx, 1
-	imul rbx, rcx
-	sub rax, rbx
 	push rax
-	mov rbx, 0
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 5
+	imul rbx, rcx
+	add rax, rbx
+	mov rbx, rax
 	pop rax
 	cmp rax, rbx
 	je if_end_2

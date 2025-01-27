@@ -275,7 +275,10 @@ NodeBoolExpr* Parser::parse_bool_expr() {
 		(
 			peek().value().type != TokenType::DOUBLE_EQUAL &&
 			peek().value().type != TokenType::GREATER_THAN &&
-			peek().value().type != TokenType::LESS_THAN)) return bool_expr;
+			peek().value().type != TokenType::LESS_THAN &&
+			peek().value().type != TokenType::NOT_EQUAL &&
+			peek().value().type != TokenType::LESS_EQUAL &&
+			peek().value().type != TokenType::GREATER_EQUAL)) return bool_expr;
 
 	bool_expr->bool_operator = consume().value();
 

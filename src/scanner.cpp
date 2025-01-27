@@ -117,7 +117,15 @@ std::vector<Token> Scanner::scan() {
                     tokens.push_back(Token({TokenType::GREATER_THAN}));
                 }
                 break;
-            
+
+            case '!': {
+                if (peek().has_value() && peek().value() == '=') {
+                    consume();
+                    tokens.push_back(Token({TokenType::NOT_EQUAL}));
+                } else {
+                    tokens.push_back(Token({TokenType::EXCLAMATION_MARK}));
+                }
+            }
             case ' ':
             case '\r':
             case '\n':

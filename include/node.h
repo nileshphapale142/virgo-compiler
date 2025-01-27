@@ -25,7 +25,7 @@ struct NodeExpr {
 };
 
 struct NodeBoolExpr {
-    NodeExpr* expr1;
+    NodeExpr* expr1{};
     std::optional<Token> bool_operator;
     std::optional<NodeExpr*> expr2;
 };

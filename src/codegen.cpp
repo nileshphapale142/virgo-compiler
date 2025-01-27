@@ -149,10 +149,29 @@ void CodeGenerator::handle_bool_expr(const NodeBoolExpr *bool_expr, const std::s
 	if (bool_expr->expr2.has_value()) {
 		handle_expr(bool_expr->expr2.value());
 
-		const auto op_type = bool_expr->bool_operator.value().type;
-
-		jmp_if = op_type == TokenType::DOUBLE_EQUAL ? "jne" :
-			(op_type == TokenType::LESS_THAN ? "jge" : "jle");
+		switch (bool_expr->bool_operator.value().type) {
+			case TokenType::DOUBLE_EQUAL:
+				jmp_if = "jne";
+			break;
+			case TokenType::NOT_EQUAL:
+				jmp_if = "je";
+			break;
+			case TokenType::GREATER_THAN:
+				jmp_if = "jle";
+			break;
+			case TokenType::LESS_THAN:
+				jmp_if = "jge";
+			break;
+			case TokenType::GREATER_EQUAL:
+				jmp_if = "jl";
+			break;
+			case TokenType::LESS_EQUAL:
+				jmp_if = "jg";
+			break;
+			default:
+				std::cerr << "Unknown operation type" << std::endl;
+				exit(EXIT_FAILURE);
+		}
 
 		output_code.start << "	mov rbx, rax\n";
 	} else {
@@ -163,7 +182,6 @@ void CodeGenerator::handle_bool_expr(const NodeBoolExpr *bool_expr, const std::s
 
 	output_code.start << "	cmp rax, rbx\n";
 	output_code.start << "\t" << jmp_if << " " <<  jmp_to<<"\n";
-
 }
 
 
