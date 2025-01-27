@@ -9,10 +9,10 @@ enum class TokenType {
     PLUS, MINUS, STAR, BACKWARD_SLASH, EQUAL,
     LEFT_CURLY, RIGHT_CURLY, LESS_THAN, GREATER_THAN,
     // Double-character tokens
-    DOUBLE_EQUAL,
+    DOUBLE_EQUAL, LESS_EQUAL, GREATER_EQUAL, NOT_EQUAL,
     // Literals
     INTEGER,
-    
+
     IDENTIFIER,
     // Keywords
     PRINT, PRINTLN, LET, IF, ELIF, ELSE
