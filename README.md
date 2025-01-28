@@ -22,7 +22,7 @@ $$
     \langle else \rangle & ::= & \epsilon \space | \space \texttt{"else"} \space \langle scope \rangle\\
    \langle scope \rangle & ::= & \texttt{"\{"} \langle stmt-list \rangle \texttt{"\}"}\\
    \langle bool\_expr \rangle & ::= & \langle expr \rangle \space | \space \langle expr \rangle \langle comp\_operator \rangle \langle expr \rangle \\
-    \langle expr \rangle & ::= & \langle factor \rangle  \space | \space \langle factor \rangle \space \texttt{"+"} \space \langle expr \rangle \space | \space \langle factor \rangle \space \texttt{"-"} \space \langle expr \rangle \\
+    \langle expr \rangle & ::= & \langle factor \rangle  \space | \space \texttt{"+"} \langle factor \rangle \space | \space \texttt{"-"} \langle factor \rangle \space |\space \langle factor \rangle \space \texttt{"+"} \space \langle expr \rangle \space | \space \langle factor \rangle \space \texttt{"-"} \space \langle expr \rangle \\
     \langle factor \rangle & ::= & \langle term \rangle \space | \space \langle term \rangle \space \texttt{"*"} \space  \langle factor \rangle  \space | \space \langle term \rangle \space \texttt{"/"} \space \langle factor \rangle  \\
     \langle term \rangle & ::= &  \langle identifier \rangle \space | \space \text{integer\_literal} \\
     \langle identifier \rangle & ::= & \langle letter \rangle (\space \langle letter \rangle \space | \space \langle digit \rangle \space)^* \\
