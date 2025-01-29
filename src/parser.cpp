@@ -1,6 +1,7 @@
 #include "parser.h"
 #include "../include/parser.h"
 #include <iostream>
+#include <valarray>
 
 
 Parser::Parser(std::vector<Token> &tokens) : tokens(std::move(tokens)) , curr_index(0) {}
@@ -291,6 +292,10 @@ NodeBoolExpr* Parser::parse_bool_expr() {
 
 NodeExpr* Parser::parse_expr() {
 	auto* expr = new NodeExpr();
+
+	if (peek().has_value() && (peek().value().type == TokenType::PLUS || peek().value().type == TokenType::MINUS)) {
+		expr->val_list.emplace_back(consume().value());
+	}
 
 	while (const auto &factor = parse_factor()) {
 		expr->val_list.emplace_back(factor.value());

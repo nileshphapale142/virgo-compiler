@@ -1,7 +1,7 @@
  # Virgo Compiler
 
 Work in progress:
-**Comparision in condition**
+**Negative integers**
 
 ## Grammar
 

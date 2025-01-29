@@ -210,6 +210,11 @@ void CodeGenerator::handle_print(const NodePrint *node) {
 	if (label_cnt == 1) {
 		output_code.procs << "itoa:\n";
 		output_code.procs << "	xor rbx, rbx\n";
+		output_code.procs << "	cmp rax, 0\n";
+		output_code.procs << "	jge handle_negative_end\n";
+		output_code.procs << "	mov rbx,1\n";
+		output_code.procs << "	neg rax\n";
+		output_code.procs << "handle_negative_end:\n";
 		output_code.procs << "	mov rcx, 10\n";
 		output_code.procs << "itoa_loop:\n";
 		output_code.procs << "	xor rdx, rdx\n";
@@ -219,6 +224,11 @@ void CodeGenerator::handle_print(const NodePrint *node) {
 		output_code.procs <<" 	mov [rdi], dl\n";
 		output_code.procs << "	test rax, rax\n";
 		output_code.procs << "	jnz itoa_loop\n";
+		output_code.procs << "	cmp rbx, 0\n";
+		output_code.procs << "	je itoa_end\n";
+		output_code.procs << "	dec rdi\n";
+		output_code.procs << "	mov byte [rdi], 45\n";
+		output_code.procs << "itoa_end:\n";
 		output_code.procs << "	ret\n";
 	}
 }
