@@ -1,7 +1,7 @@
  # Virgo Compiler
 
 Work in progress:
-**Negative integers**
+**Post Increment and Decrement**
 
 ## Grammar
 
@@ -9,11 +9,13 @@ $$
 \begin{array}{rcl}
     \langle program \rangle & ::= & \langle stmt-list \rangle \\
     \langle stmt-list \rangle & ::= & \epsilon \space | \space \langle stmt \rangle \space  | \space \langle stmt-list \rangle \space \langle stmt \rangle \\
-    \langle stmt \rangle & ::= & \langle print \rangle  \space | \space \langle println \rangle \space | \space \langle declaration \rangle \space | \space \langle assignment \rangle \space | \space \langle scope \rangle \space | \space \langle condition \rangle \space | \space \langle comment \rangle\\
+    \langle stmt \rangle & ::= & \langle print \rangle  \space | \space \langle println \rangle \space | \space \langle declaration \rangle \space | \space \langle assignment \rangle \space | \space \langle increment \rangle \space | \space \langle decrement \rangle \space | \space \langle scope \rangle \space | \space \langle condition \rangle \space | \space \langle comment \rangle\\
     \langle print \rangle & ::= & \texttt{"print("}\langle expr \rangle\texttt{");"} \\
     \langle println \rangle & ::= & \texttt{"println("}\langle expr \rangle\texttt{");"} \\
     \langle declaration \rangle & ::= & \texttt{"let"} \space \langle identifier \rangle \texttt{"="} \langle expr \rangle \texttt{";"}   \\
     \langle assignment \rangle  &::= & \langle identifier \rangle \space \texttt{"="} \space \langle expr \rangle \texttt{";"}\\
+    \langle increment \rangle & ::= & \langle identifier \rangle \texttt{"++"}\\
+    \langle decrement \rangle & ::= & \langle identifier \rangle \texttt{"--"}\\
     \langle condition \rangle & ::= & \langle if \rangle \space \langle elif-chain \rangle  \space \langle else \rangle \\
     \langle if \rangle & ::= & \texttt{"if"} \space   \langle bool\_expr \rangle \space \langle scope \rangle\\
     \langle elif-chain \rangle & ::= & \epsilon \space | 
@@ -24,7 +26,7 @@ $$
    \langle bool\_expr \rangle & ::= & \langle expr \rangle \space | \space \langle expr \rangle \langle comp\_operator \rangle \langle expr \rangle \\
     \langle expr \rangle & ::= & \langle factor \rangle  \space | \space \texttt{"+"} \langle factor \rangle \space | \space \texttt{"-"} \langle factor \rangle \space |\space \langle factor \rangle \space \texttt{"+"} \space \langle expr \rangle \space | \space \langle factor \rangle \space \texttt{"-"} \space \langle expr \rangle \\
     \langle factor \rangle & ::= & \langle term \rangle \space | \space \langle term \rangle \space \texttt{"*"} \space  \langle factor \rangle  \space | \space \langle term \rangle \space \texttt{"/"} \space \langle factor \rangle  \\
-    \langle term \rangle & ::= &  \langle identifier \rangle \space | \space \text{integer\_literal} \\
+    \langle term \rangle & ::= &  \langle identifier \rangle \space | \space \text{unsigned\_integer\_literal} \\
     \langle identifier \rangle & ::= & \langle letter \rangle (\space \langle letter \rangle \space | \space \langle digit \rangle \space)^* \\
     \langle comp\_operator \rangle & ::= & \texttt{"=="} \space | \space \texttt{"!="} \space |  \space \texttt{"<"}  \space | \space \texttt{">"} | \space \texttt{"<="} \space | \space \texttt{">="} \space\\
     \langle comment \rangle & ::= & \texttt{"//"} \langle any-character-except-new-line \rangle  ^* \space | \space \texttt{"/**"} \langle any-character \rangle^* \texttt{"**/"}\\
