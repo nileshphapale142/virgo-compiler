@@ -5,17 +5,12 @@ section .text
 _start:
 	mov rax, 0
 	mov rbx, 1
-	mov rcx, 24
+	mov rcx, 0
 	imul rbx, rcx
+	add rax, rbx
 	push rax
-	mov rax, rbx
-	mov rcx, 5
-	xor rdx, rdx
-	div rcx
-	mov rbx, rax
-	pop rax
-	sub rax, rbx
-	push rax
+	inc qword [rsp + 0]
+	dec qword [rsp + 0]
 	mov rax, 0
 	mov rbx, 1
 	mov rcx, [rsp + 0]

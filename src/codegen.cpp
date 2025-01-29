@@ -59,6 +59,10 @@ void CodeGenerator::handle_stmt(const NodeStmt *stmt) {
 		handle_scope(std::get<NodeScope*>(stmt->stmt));
 	} else if (std::holds_alternative<NodeCondition*>(stmt->stmt)) {
 		handle_condition(std::get<NodeCondition*>(stmt->stmt));
+	} else if (std::holds_alternative<NodeIncrement*>(stmt->stmt)) {
+		handle_increment(std::get<NodeIncrement*>(stmt->stmt));
+	} else if (std::holds_alternative<NodeDecrement*>(stmt->stmt)) {
+		handle_decrement(std::get<NodeDecrement*>(stmt->stmt));
 	} else {
 		std::cerr << "Unknown statement type" << std::endl;
 		exit(EXIT_FAILURE);
@@ -80,6 +84,10 @@ void CodeGenerator::handle_scope(const NodeScope *scope) {
 			handle_scope(std::get<NodeScope*>(stmt->stmt));
 		} else if (std::holds_alternative<NodeCondition*>(stmt->stmt)) {
 			handle_condition(std::get<NodeCondition*>(stmt->stmt));
+		} else if (std::holds_alternative<NodeIncrement*>(stmt->stmt)) {
+			handle_increment(std::get<NodeIncrement*>(stmt->stmt));
+		} else if (std::holds_alternative<NodeDecrement*>(stmt->stmt)) {
+			handle_decrement(std::get<NodeDecrement*>(stmt->stmt));
 		} else {
 			std::cerr << "Unknown statement type" << std::endl;
 			exit(EXIT_FAILURE);
@@ -267,6 +275,36 @@ void CodeGenerator::handle_assignment(const NodeAssignment *assign) {
 
 	output_code.start << "	mov [rsp + " << index * 8 << "], rax\n";
 }
+
+
+void CodeGenerator::handle_increment(const NodeIncrement *increment) {
+	const auto itr = std::ranges::find_if(vars.begin(), vars.end(), [&](const std::string& var) {
+		return var == increment->ident->name.value.value();
+	});
+
+	if (itr == vars.end()) {
+		std::cerr << "Identifier " << increment->ident->name.value.value() << " does not exist" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	const size_t index = vars.size() - 1 - std::distance(vars.begin(), itr);
+	output_code.start << "	inc qword [rsp + " << index * 8 << "]\n";
+}
+
+void CodeGenerator::handle_decrement(const NodeDecrement *decrement) {
+	const auto itr = std::ranges::find_if(vars.begin(), vars.end(), [&](const std::string& var) {
+		return var == decrement->ident->name.value.value();
+	});
+
+	if (itr == vars.end()) {
+		std::cerr << "Identifier " << decrement->ident->name.value.value() << " does not exist" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	const size_t index = vars.size() - 1 - std::distance(vars.begin(), itr);
+	output_code.start << "	dec qword [rsp + " << index * 8 << "]\n";
+}
+
 
 
 void CodeGenerator::handle_expr(const NodeExpr *expr) {

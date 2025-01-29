@@ -48,6 +48,16 @@ std::optional<NodeStmt*> Parser::parse_stmt() {
 		return stmt;
 	}
 
+	if (auto inc_stmt = parse_increment()) {
+		stmt->stmt = inc_stmt.value();
+		return stmt;
+	}
+
+	if (auto dec_stmt = parse_decrement()) {
+		stmt->stmt = dec_stmt.value();
+		return stmt;
+	}
+
 	if (auto scope = parse_scope()) {
 		stmt->stmt = scope.value();
 		return stmt;
@@ -136,16 +146,10 @@ std::optional<NodeDeclaration *> Parser::parse_declaration() {
 
 
 std::optional<NodeAssignment* > Parser::parse_assignment() {
-	if (!peek().has_value() || peek().value().type != TokenType::IDENTIFIER) return std::nullopt;
+	if (!peek().has_value() || peek().value().type != TokenType::IDENTIFIER
+		|| !peek(1).has_value() || peek(1).value().type != TokenType::EQUAL) return std::nullopt;
 
-	auto* assign = new NodeAssignment();
-
-	assign->ident = new NodeIdentifier(consume().value());
-
-	if (!peek().has_value() || peek().value().type != TokenType::EQUAL) {
-		std::cerr << "Expected = sign" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	auto* assign = new NodeAssignment({.ident = new NodeIdentifier({.name = consume().value()})});
 
 	consume();
 
@@ -159,6 +163,50 @@ std::optional<NodeAssignment* > Parser::parse_assignment() {
 	consume();
 
 	return assign;
+}
+
+std::optional<NodeIncrement*> Parser::parse_increment() {
+	if (!peek().has_value() || peek().value().type != TokenType::IDENTIFIER
+		|| !peek(1).has_value() || peek(1).value().type != TokenType::PLUS
+		|| !peek(2).has_value() || peek(2).value().type != TokenType::PLUS
+		) return std::nullopt;
+
+	auto increment = new NodeIncrement({new NodeIdentifier(consume().value())});
+
+	consume();
+	consume();
+
+	if (!peek().has_value() || peek().value().type != TokenType::SEMICOLON) {
+		std::cerr << "Expected ;" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	consume();
+
+
+	return increment;
+}
+
+
+std::optional<NodeDecrement*> Parser::parse_decrement() {
+	if (!peek().has_value() || peek().value().type != TokenType::IDENTIFIER
+		|| !peek(1).has_value() || peek(1).value().type != TokenType::MINUS
+		|| !peek(2).has_value() || peek(2).value().type != TokenType::MINUS
+		) return std::nullopt;
+
+	auto decrement = new NodeDecrement({new NodeIdentifier(consume().value())});
+
+	consume();
+	consume();
+
+	if (!peek().has_value() || peek().value().type != TokenType::SEMICOLON) {
+		std::cerr << "Expected ;" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	consume();
+
+	return decrement;
 }
 
 
@@ -348,8 +396,8 @@ std::optional<NodeTerm*> Parser::parse_term() {
 	exit(EXIT_FAILURE);
 }
 
-std::optional<Token> Parser::peek() {
-	if (curr_index < tokens.size()) return tokens.at(curr_index);
+std::optional<Token> Parser::peek(const int offset) {
+	if (curr_index + offset < tokens.size()) return tokens.at(curr_index + offset);
 	return std::nullopt;
 }
 

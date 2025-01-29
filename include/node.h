@@ -65,8 +65,17 @@ struct NodeAssignment {
     NodeExpr* expr;
 };
 
+struct NodeIncrement {
+    NodeIdentifier* ident;
+};
+
+struct NodeDecrement {
+    NodeIdentifier* ident;
+};
+//TODO: think of merging node increment and node decrement
+
 struct NodeStmt {
-    std::variant<NodePrint*, NodeDeclaration*, NodeAssignment*, NodeScope*, NodeCondition*> stmt;
+    std::variant<NodePrint*, NodeDeclaration*, NodeAssignment*, NodeScope*, NodeCondition*, NodeIncrement*, NodeDecrement*> stmt;
 };
 
 struct NodeStmtList {
