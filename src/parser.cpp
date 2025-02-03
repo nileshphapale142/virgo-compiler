@@ -194,7 +194,7 @@ std::optional<NodeDecrement*> Parser::parse_decrement() {
 		|| !peek(2).has_value() || peek(2).value().type != TokenType::MINUS
 		) return std::nullopt;
 
-	auto decrement = new NodeDecrement({new NodeIdentifier(consume().value())});
+	auto decrement = new NodeDecrement({.ident = new NodeIdentifier({.name = consume().value()})});
 
 	consume();
 	consume();
