@@ -20,6 +20,7 @@ private:
     std::optional<NodeAssignment*> parse_assignment();
     std::optional<NodeIncrement*> parse_increment();
     std::optional<NodeDecrement*> parse_decrement();
+    std::optional<NodeWhile*> parse_while();
     std::optional<NodeScope*> parse_scope();
     std::optional<NodeCondition*> parse_condition();
     std::optional<NodeIf*> parse_if();
@@ -29,6 +30,6 @@ private:
     NodeExpr* parse_expr();
     std::optional<NodeTerm*> parse_term();
     std::optional<NodeFactor*> parse_factor();
-    std::optional<Token> peek(int offset = 0);
+std::optional<Token> peek(int offset = 0);
     std::optional<Token> consume();
 };

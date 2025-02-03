@@ -30,6 +30,11 @@ struct NodeBoolExpr {
     std::optional<NodeExpr*> expr2;
 };
 
+struct NodeWhile {
+    NodeBoolExpr* bool_expr;
+    NodeScope* scope;
+};
+
 struct NodeIf {
     NodeBoolExpr* bool_expr;
     NodeScope* scope;
@@ -75,7 +80,9 @@ struct NodeDecrement {
 //TODO: think of merging node increment and node decrement
 
 struct NodeStmt {
-    std::variant<NodePrint*, NodeDeclaration*, NodeAssignment*, NodeScope*, NodeCondition*, NodeIncrement*, NodeDecrement*> stmt;
+    std::variant<NodePrint*, NodeDeclaration*, NodeAssignment*,
+    NodeScope*, NodeCondition*, NodeIncrement*, NodeDecrement*,
+    NodeWhile*> stmt;
 };
 
 struct NodeStmtList {

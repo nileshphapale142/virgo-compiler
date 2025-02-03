@@ -63,6 +63,8 @@ void CodeGenerator::handle_stmt(const NodeStmt *stmt) {
 		handle_increment(std::get<NodeIncrement*>(stmt->stmt));
 	} else if (std::holds_alternative<NodeDecrement*>(stmt->stmt)) {
 		handle_decrement(std::get<NodeDecrement*>(stmt->stmt));
+	} else if (std::holds_alternative<NodeWhile*>(stmt->stmt)) {
+		handle_while(std::get<NodeWhile*>(stmt->stmt));
 	} else {
 		std::cerr << "Unknown statement type" << std::endl;
 		exit(EXIT_FAILURE);
@@ -88,6 +90,8 @@ void CodeGenerator::handle_scope(const NodeScope *scope) {
 			handle_increment(std::get<NodeIncrement*>(stmt->stmt));
 		} else if (std::holds_alternative<NodeDecrement*>(stmt->stmt)) {
 			handle_decrement(std::get<NodeDecrement*>(stmt->stmt));
+		} else if (std::holds_alternative<NodeWhile*>(stmt->stmt)) {
+			handle_while(std::get<NodeWhile*>(stmt->stmt));
 		} else {
 			std::cerr << "Unknown statement type" << std::endl;
 			exit(EXIT_FAILURE);
@@ -100,6 +104,21 @@ void CodeGenerator::handle_scope(const NodeScope *scope) {
 		output_code.start << "	pop rax\n";
 		vars.pop_back();
 	}
+}
+
+
+void CodeGenerator::handle_while(const NodeWhile *while_node) {
+	while_cnt ++;
+
+	const std::string while_end = "while_end_" + std::to_string(while_cnt);
+	const std::string while_start = "while_start_" + std::to_string(while_cnt);
+
+	output_code.start << while_start << ":\n";
+	handle_bool_expr(while_node->bool_expr, while_end);
+
+	handle_scope(while_node->scope);
+	output_code.start << "	jmp " << while_start << "\n";
+	output_code.start << while_end << ":\n";
 }
 
 void CodeGenerator::handle_condition(const NodeCondition* condition) {
@@ -128,7 +147,7 @@ void CodeGenerator::handle_if(const NodeIf *if_node, const int cond_cnt) {
 
 	handle_scope(if_node->scope);
 
-	output_code.start << "jmp cond_end_" << cond_cnt<< "\n";
+	output_code.start << "	jmp cond_end_" << cond_cnt<< "\n";
 	output_code.start << if_end << ":\n";
 }
 
@@ -138,7 +157,7 @@ void CodeGenerator::handle_elif(const NodeElif *elif_node,  const int cond_cnt, 
 
 	handle_scope(elif_node->scope);
 
-	output_code.start << "jmp cond_end_" << cond_cnt<< "\n";
+	output_code.start << "	jmp cond_end_" << cond_cnt<< "\n";
 	output_code.start << elif_end << ":\n";
 }
 

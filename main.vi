@@ -1,5 +1,13 @@
-let y = 0;
-//y = y + 1;
-y++;
-y--;
-println(y);
+let y = 10;
+while y {
+
+    while y >= 2 {
+        print(0000);
+        println(y);
+
+        y--;
+    }
+
+    println(y);
+    y --;
+}

@@ -68,6 +68,12 @@ std::optional<NodeStmt*> Parser::parse_stmt() {
 		return stmt;
 	}
 
+
+	if (auto while_stmt = parse_while()) {
+		stmt->stmt = while_stmt.value();
+		return stmt;
+	}
+
 	return std::nullopt;
 };
 
@@ -207,6 +213,24 @@ std::optional<NodeDecrement*> Parser::parse_decrement() {
 	consume();
 
 	return decrement;
+}
+
+
+std::optional<NodeWhile* > Parser::parse_while() {
+	if (!peek().has_value() || peek().value().type != TokenType::WHILE) return std::nullopt;
+
+	consume();
+
+	auto while_node = new NodeWhile({.bool_expr = parse_bool_expr()});
+
+	if (const auto scope = parse_scope()) {
+		while_node->scope = scope.value();
+	} else {
+		std::cerr << "Unexpected end of while statement" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	return while_node;
 }
 
 

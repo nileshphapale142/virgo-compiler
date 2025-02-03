@@ -25,6 +25,7 @@ class CodeGenerator {
 		void handle_assignment(const NodeAssignment *assign);
 		void handle_increment(const NodeIncrement *increment);
 		void handle_decrement(const NodeDecrement *decrement);
+		void handle_while(const NodeWhile *while_node);
 		void handle_scope(const NodeScope *scope);
 		void handle_condition(const NodeCondition *condition);
 		void handle_if(const NodeIf *if_node, int cond_cnt);
@@ -43,6 +44,7 @@ class CodeGenerator {
 		buffer output_code;
 		int label_cnt;
 		int if_stmt_cnt = 0;
+		int while_cnt = 0;
 
 		std::vector<std::string> vars;
 };
