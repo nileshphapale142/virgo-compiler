@@ -1,7 +1,7 @@
  # Virgo Compiler
 
 Work in progress:
-**Post Increment and Decrement**
+**While loop**
 
 ## Grammar
 
@@ -9,11 +9,12 @@ $$
 \begin{array}{rcl}
     \langle program \rangle & ::= & \langle stmt-list \rangle \\
     \langle stmt-list \rangle & ::= & \epsilon \space | \space \langle stmt \rangle \space  | \space \langle stmt-list \rangle \space \langle stmt \rangle \\
-    \langle stmt \rangle & ::= & \langle print \rangle  \space | \space \langle println \rangle \space | \space \langle declaration \rangle \space | \space \langle assignment \rangle \space | \space \langle increment \rangle \space | \space \langle decrement \rangle \space | \space \langle scope \rangle \space | \space \langle condition \rangle \space | \space \langle comment \rangle\\
+    \langle stmt \rangle & ::= & \langle print \rangle  \space | \space \langle println \rangle \space | \space \langle declaration \rangle \space | \space \langle assignment \rangle \space | \space \langle increment \rangle \space | \space \langle decrement \rangle \space | \space \langle scope \rangle \space | \space \langle condition \rangle \space | \space \langle comment \rangle \space | \space \langle while-loop \rangle\\
     \langle print \rangle & ::= & \texttt{"print("}\langle expr \rangle\texttt{");"} \\
     \langle println \rangle & ::= & \texttt{"println("}\langle expr \rangle\texttt{");"} \\
     \langle declaration \rangle & ::= & \texttt{"let"} \space \langle identifier \rangle \texttt{"="} \langle expr \rangle \texttt{";"}   \\
     \langle assignment \rangle  &::= & \langle identifier \rangle \space \texttt{"="} \space \langle expr \rangle \texttt{";"}\\
+    \langle while-loop \rangle & ::= & \texttt{"while"} \langle condition \rangle \space \langle scope \rangle \\
     \langle increment \rangle & ::= & \langle identifier \rangle \texttt{"++"}\\
     \langle decrement \rangle & ::= & \langle identifier \rangle \texttt{"--"}\\
     \langle condition \rangle & ::= & \langle if \rangle \space \langle elif-chain \rangle  \space \langle else \rangle \\
