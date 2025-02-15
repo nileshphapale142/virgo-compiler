@@ -2,7 +2,7 @@
 
 #include "node.h"
 #include "token.h"
-
+#include "arenaAllocator.h"
 
 class Parser {
 public:
@@ -12,6 +12,8 @@ public:
 private:
     std::vector<Token> tokens;
     size_t curr_index;
+
+    ArenaAllocator *allocator;
 
     NodeStmtList* parse_stmt_list();
     std::optional<NodeStmt*> parse_stmt();
@@ -30,6 +32,6 @@ private:
     NodeExpr* parse_expr();
     std::optional<NodeTerm*> parse_term();
     std::optional<NodeFactor*> parse_factor();
-std::optional<Token> peek(int offset = 0);
+    std::optional<Token> peek(int offset = 0);
     std::optional<Token> consume();
 };

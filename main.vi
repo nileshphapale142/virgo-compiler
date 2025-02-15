@@ -1,13 +1,20 @@
-let y = 10;
-while y {
+let a = 0;
+let b = 1;
 
-    while y >= 2 {
-        print(0000);
-        println(y);
 
-        y--;
+println(b);
+
+while b < 5 {
+    let c = a + b;
+    a = b;
+    b = c;
+
+    if b == 3  {
+        c = 5;
+    } else {
+        println(-1);
     }
 
-    println(y);
-    y --;
+    println(c);
 }
+

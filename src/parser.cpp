@@ -1,14 +1,16 @@
 #include "parser.h"
-#include "../include/parser.h"
 #include <iostream>
+#include <ranges>
 #include <valarray>
 
 
-Parser::Parser(std::vector<Token> &tokens) : tokens(std::move(tokens)) , curr_index(0) {}
+Parser::Parser(std::vector<Token> &tokens) : tokens(std::move(tokens)) , curr_index(0) {
+	allocator =  new ArenaAllocator(1024 * 1024);
+}
 
 NodeProgram* Parser::parse() {
 
-	auto* program = new NodeProgram();
+	auto* program = allocator->allocate<NodeProgram>();
 
 	program->stmt_list = parse_stmt_list();
 
@@ -22,7 +24,7 @@ NodeProgram* Parser::parse() {
 
 
 NodeStmtList *Parser::parse_stmt_list() {
-	auto* stmt_list = new NodeStmtList();
+	auto* stmt_list = allocator->allocate<NodeStmtList>();
 
 	while (auto stmt = parse_stmt()) {
 		stmt_list->stmts.push_back(stmt.value());
@@ -32,7 +34,7 @@ NodeStmtList *Parser::parse_stmt_list() {
 }
 
 std::optional<NodeStmt*> Parser::parse_stmt() {
-	auto* stmt = new NodeStmt();
+	auto* stmt = allocator->allocate<NodeStmt>();
 
 	if (auto print_stmt = parse_print()) {
 		stmt->stmt = print_stmt.value();
@@ -84,7 +86,7 @@ std::optional<NodePrint*> Parser::parse_print() {
 	peek().value().type != TokenType::PRINT &&
 	peek().value().type != TokenType::PRINTLN)) return std::nullopt;
 
-	auto* print_node = new NodePrint();
+	auto* print_node = allocator->allocate<NodePrint>();
 
 	print_node->is_println = peek().value().type == TokenType::PRINTLN;
 
@@ -120,7 +122,7 @@ std::optional<NodeDeclaration *> Parser::parse_declaration() {
 
 	if (!peek().has_value() || peek().value().type != TokenType::LET) return std::nullopt;
 
-	auto* decl = new NodeDeclaration();
+	auto* decl = allocator->allocate<NodeDeclaration>();
 
 	consume();
 
@@ -129,7 +131,9 @@ std::optional<NodeDeclaration *> Parser::parse_declaration() {
 		exit(EXIT_FAILURE);
 	}
 
-	decl->ident = new NodeIdentifier({consume().value()});
+	decl->ident = allocator->allocate<NodeIdentifier>();
+	decl->ident->name = consume().value();
+
 
 	if (!peek().has_value() || peek().value().type != TokenType::EQUAL) {
 		std::cerr << "Expected = sign" << std::endl;
@@ -155,7 +159,12 @@ std::optional<NodeAssignment* > Parser::parse_assignment() {
 	if (!peek().has_value() || peek().value().type != TokenType::IDENTIFIER
 		|| !peek(1).has_value() || peek(1).value().type != TokenType::EQUAL) return std::nullopt;
 
-	auto* assign = new NodeAssignment({.ident = new NodeIdentifier({.name = consume().value()})});
+
+	//todo: try to make it shorter
+	auto* assign = allocator->allocate<NodeAssignment>();
+	assign->ident = allocator->allocate<NodeIdentifier>();
+	assign->ident->name = consume().value();
+	// auto* assign = new NodeAssignment({.ident = new NodeIdentifier({.name = consume().value()})});
 
 	consume();
 
@@ -177,7 +186,11 @@ std::optional<NodeIncrement*> Parser::parse_increment() {
 		|| !peek(2).has_value() || peek(2).value().type != TokenType::PLUS
 		) return std::nullopt;
 
-	auto increment = new NodeIncrement({new NodeIdentifier(consume().value())});
+	// auto increment = new NodeIncrement({.ident = new NodeIdentifier({.name = consume().value()})});
+	auto increment = allocator->allocate<NodeIncrement>();
+	increment->ident = allocator->allocate<NodeIdentifier>();
+	increment->ident->name = consume().value();
+
 
 	consume();
 	consume();
@@ -200,7 +213,10 @@ std::optional<NodeDecrement*> Parser::parse_decrement() {
 		|| !peek(2).has_value() || peek(2).value().type != TokenType::MINUS
 		) return std::nullopt;
 
-	auto decrement = new NodeDecrement({.ident = new NodeIdentifier({.name = consume().value()})});
+	// auto decrement = new NodeDecrement({.ident = new NodeIdentifier({.name = consume().value()})});
+	auto decrement = allocator->allocate<NodeDecrement>();
+	decrement->ident = allocator->allocate<NodeIdentifier>();
+	decrement->ident->name = consume().value();
 
 	consume();
 	consume();
@@ -221,7 +237,9 @@ std::optional<NodeWhile* > Parser::parse_while() {
 
 	consume();
 
-	auto while_node = new NodeWhile({.bool_expr = parse_bool_expr()});
+	// auto while_node = new NodeWhile({.bool_expr = parse_bool_expr()});
+	auto while_node = allocator->allocate<NodeWhile>();
+	while_node->bool_expr = parse_bool_expr();
 
 	if (const auto scope = parse_scope()) {
 		while_node->scope = scope.value();
@@ -239,7 +257,8 @@ std::optional<NodeScope*> Parser::parse_scope() {
 
 	consume();
 
-	auto* scope = new NodeScope();
+	// auto* scope = new NodeScope();
+	auto scope = allocator->allocate<NodeScope>();
 
 	NodeStmtList* stmt_list = parse_stmt_list();
 
@@ -262,7 +281,8 @@ std::optional<NodeCondition*> Parser::parse_condition() {
 
 	if (!if_cond) return std::nullopt;
 
-	auto condition = new NodeCondition();
+	// auto condition = new NodeCondition();
+	auto condition = allocator->allocate<NodeCondition>();
 
 	condition->if_cond = if_cond.value();
 
@@ -286,7 +306,8 @@ std::optional<NodeCondition*> Parser::parse_condition() {
 std::optional<NodeIf*> Parser::parse_if() {
 	if (!peek().has_value() || peek().value().type != TokenType::IF) return std::nullopt;
 
-	auto* if_node = new NodeIf();
+	// auto* if_node = new NodeIf();
+	auto if_node = allocator->allocate<NodeIf>();
 
 	consume();
 
@@ -306,7 +327,8 @@ std::optional<NodeIf*> Parser::parse_if() {
 std::optional<NodeElif*> Parser::parse_elif() {
 	if (!peek().has_value() || peek().value().type != TokenType::ELIF) return std::nullopt;
 
-	auto* elif_node = new NodeElif();
+	// auto* elif_node = new NodeElif();
+	auto elif_node = allocator->allocate<NodeElif>();
 
 	consume();
 
@@ -327,7 +349,8 @@ std::optional<NodeElse*> Parser::parse_else() {
 
 	consume();
 
-	auto *else_node = new NodeElse();
+	// auto *else_node = new NodeElse();
+	auto else_node = allocator->allocate<NodeElse>();
 
 	if (const auto scope = parse_scope()) {
 		else_node->scope = scope.value();
@@ -341,7 +364,9 @@ std::optional<NodeElse*> Parser::parse_else() {
 
 
 NodeBoolExpr* Parser::parse_bool_expr() {
-	auto* bool_expr = new NodeBoolExpr();
+	// auto* bool_expr = new NodeBoolExpr();
+	const auto bool_expr = allocator->allocate<NodeBoolExpr>();
+
 	bool_expr->expr1 = parse_expr();
 
 	if (!peek().has_value() ||
@@ -363,7 +388,8 @@ NodeBoolExpr* Parser::parse_bool_expr() {
 
 
 NodeExpr* Parser::parse_expr() {
-	auto* expr = new NodeExpr();
+	// auto* expr = new NodeExpr();
+	const auto expr = allocator->allocate<NodeExpr>();
 
 	if (peek().has_value() && (peek().value().type == TokenType::PLUS || peek().value().type == TokenType::MINUS)) {
 		expr->val_list.emplace_back(consume().value());
@@ -384,7 +410,8 @@ NodeExpr* Parser::parse_expr() {
 
 
 std::optional<NodeFactor*> Parser::parse_factor() {
-	auto* factor = new NodeFactor();
+	// auto* factor = new NodeFactor();
+	auto factor = allocator->allocate<NodeFactor>();
 
 	while (const auto& term = parse_term()) {
 		factor->val_list.emplace_back(term.value());
@@ -403,7 +430,9 @@ std::optional<NodeFactor*> Parser::parse_factor() {
 std::optional<NodeTerm*> Parser::parse_term() {
 
 	if (peek().has_value()){
-		auto* term = new NodeTerm();
+		// auto* term = new NodeTerm();
+		auto term = allocator->allocate<NodeTerm>();
+
 		if (peek().value().type == TokenType::INTEGER) {
 			term->value = consume().value();
 		} else if (peek().value().type == TokenType::IDENTIFIER) {
