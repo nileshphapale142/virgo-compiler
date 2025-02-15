@@ -15,11 +15,11 @@ enum class TokenType {
 
     IDENTIFIER,
     // Keywords
-    PRINT, PRINTLN, LET, IF, ELIF, ELSE, WHILE
+    PRINT, PRINTLN, LET, IF, ELIF, ELSE, WHILE, BE
 };
 
 struct Token {
-    TokenType type;
+    TokenType type{};
     std::optional<std::string> value;
 
     [[nodiscard]] std::string tokenTypeToString() const;
