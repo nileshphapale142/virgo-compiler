@@ -22,6 +22,8 @@ _start:
 	mov rdx, r8
 	sub rdx, rdi
 	inc rdx
+	mov byte [r8 + 1], 10
+	inc rdx
 	mov rax, 1
 	mov rsi, rdi
 	mov rdi, 1

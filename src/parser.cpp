@@ -84,11 +84,11 @@ std::optional<NodePrint*> Parser::parse_print() {
 
 	if (!peek().has_value() || (
 	peek().value().type != TokenType::SHOW &&
-	peek().value().type != TokenType::PRINTLN)) return std::nullopt;
+	peek().value().type != TokenType::SHOWLINE)) return std::nullopt;
 
 	auto* print_node = allocator->allocate<NodePrint>();
 
-	print_node->is_println = peek().value().type == TokenType::PRINTLN;
+	print_node->is_println = peek().value().type == TokenType::SHOWLINE;
 
 	consume();
 	

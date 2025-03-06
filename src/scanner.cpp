@@ -155,8 +155,8 @@ std::vector<Token> Scanner::scan() {
 
                     if (token == "show") {
                         tokens.push_back(Token({TokenType::SHOW}));
-                    } else if (token == "println") {
-                        tokens.push_back(Token({TokenType::PRINTLN}));
+                    } else if (token == "showline") {
+                        tokens.push_back(Token({TokenType::SHOWLINE}));
                     } else if (token == "let") {
                         tokens.push_back(Token({TokenType::LET}));
                     } else if (token == "if") {
