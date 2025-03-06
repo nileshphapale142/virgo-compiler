@@ -99,7 +99,7 @@ std::optional<NodePrint*> Parser::parse_print() {
 
 std::optional<NodeDeclaration *> Parser::parse_declaration() {
 
-	if (!peek().has_value() || peek().value().type != TokenType::LET) return std::nullopt;
+	if (!peek().has_value() || peek().value().type != TokenType::CREATE) return std::nullopt;
 
 	auto* decl = allocator->allocate<NodeDeclaration>();
 
@@ -114,21 +114,14 @@ std::optional<NodeDeclaration *> Parser::parse_declaration() {
 	decl->ident->name = consume().value();
 
 
-	if (!peek().has_value() || peek().value().type != TokenType::BE) {
-		std::cerr << "Expected be keyword" << std::endl;
+	if (!peek().has_value() || peek().value().type != TokenType::AS) {
+		std::cerr << "Expected \"as\" "<< std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	consume();
 
 	decl->expr = parse_expr();
-
-	if (!peek().has_value() || peek().value().type != TokenType::SEMICOLON) {
-		std::cerr << "Expected ;" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
-	consume();
 
 	return decl;
 }

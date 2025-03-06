@@ -15,7 +15,7 @@ enum class TokenType {
 
     IDENTIFIER,
     // Keywords
-    SHOW, SHOWLINE, LET, IF, ELIF, ELSE, WHILE, BE
+    SHOW, SHOWLINE, CREATE, IF, ELIF, ELSE, WHILE, AS
 };
 
 struct Token {

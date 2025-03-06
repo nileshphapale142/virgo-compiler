@@ -13,6 +13,23 @@ _start:
 	mov rbx, 1
 	mov rcx, [rsp + 0]
 	imul rbx, rcx
+	mov rcx, 6
+	imul rbx, rcx
+	add rax, rbx
+	lea rdi, [print_str + 19]
+	mov r8, rdi
+	call itoa
+	mov rdx, r8
+	sub rdx, rdi
+	inc rdx
+	mov rax, 1
+	mov rsi, rdi
+	mov rdi, 1
+	syscall
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, [rsp + 0]
+	imul rbx, rcx
 	mov rcx, 4
 	imul rbx, rcx
 	add rax, rbx

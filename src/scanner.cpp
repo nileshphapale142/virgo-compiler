@@ -157,8 +157,8 @@ std::vector<Token> Scanner::scan() {
                         tokens.push_back(Token({TokenType::SHOW}));
                     } else if (token == "showline") {
                         tokens.push_back(Token({TokenType::SHOWLINE}));
-                    } else if (token == "let") {
-                        tokens.push_back(Token({TokenType::LET}));
+                    } else if (token == "create") {
+                        tokens.push_back(Token({TokenType::CREATE}));
                     } else if (token == "if") {
                         tokens.push_back(Token({TokenType::IF}));
                     } else if (token == "elif") {
@@ -167,8 +167,8 @@ std::vector<Token> Scanner::scan() {
                         tokens.push_back(Token({TokenType::ELSE}));
                     } else if (token == "while") {
                         tokens.push_back(Token({TokenType::WHILE}));
-                    } else if (token == "be") {
-                        tokens.push_back(Token({.type = TokenType::BE}));
+                    } else if (token == "as") {
+                        tokens.push_back(Token({.type = TokenType::AS}));
                     }
                     else {
                         tokens.push_back(Token({TokenType::IDENTIFIER, token}));
