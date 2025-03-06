@@ -1,3 +1,4 @@
 create x as 5
+set x to x + 1
 show x * 6
 showline x * 4

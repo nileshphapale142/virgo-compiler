@@ -128,26 +128,28 @@ std::optional<NodeDeclaration *> Parser::parse_declaration() {
 
 
 std::optional<NodeAssignment* > Parser::parse_assignment() {
-	if (!peek().has_value() || peek().value().type != TokenType::IDENTIFIER
-		|| !peek(1).has_value() || peek(1).value().type != TokenType::EQUAL) return std::nullopt;
+	if (!peek().has_value() || peek().value().type != TokenType::SET) return std::nullopt;
 
+	consume();
+
+	if (!peek().has_value() || peek().value().type != TokenType::IDENTIFIER) {
+		std::cerr << "Expected an identifier" << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
 	//todo: try to make it shorter
 	auto* assign = allocator->allocate<NodeAssignment>();
 	assign->ident = allocator->allocate<NodeIdentifier>();
 	assign->ident->name = consume().value();
-	// auto* assign = new NodeAssignment({.ident = new NodeIdentifier({.name = consume().value()})});
 
-	consume();
-
-	assign->expr = parse_expr();
-
-	if (!peek().has_value() || peek().value().type != TokenType::SEMICOLON) {
-		std::cerr << "Expected ;" << std::endl;
+	if (!peek().has_value() || peek().value().type != TokenType::TO) {
+		std::cerr << "Expected \"to\" "<< std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	consume();
+
+	assign->expr = parse_expr();
 
 	return assign;
 }

@@ -154,24 +154,28 @@ std::vector<Token> Scanner::scan() {
                     }
 
                     if (token == "show") {
-                        tokens.push_back(Token({TokenType::SHOW}));
+                        tokens.push_back(Token({.type = TokenType::SHOW}));
                     } else if (token == "showline") {
-                        tokens.push_back(Token({TokenType::SHOWLINE}));
+                        tokens.push_back(Token({.type = TokenType::SHOWLINE}));
                     } else if (token == "create") {
-                        tokens.push_back(Token({TokenType::CREATE}));
-                    } else if (token == "if") {
-                        tokens.push_back(Token({TokenType::IF}));
-                    } else if (token == "elif") {
-                        tokens.push_back(Token({TokenType::ELIF}));
-                    } else if (token == "else") {
-                        tokens.push_back(Token({TokenType::ELSE}));
-                    } else if (token == "while") {
-                        tokens.push_back(Token({TokenType::WHILE}));
+                        tokens.push_back(Token({.type = TokenType::CREATE}));
                     } else if (token == "as") {
                         tokens.push_back(Token({.type = TokenType::AS}));
+                    } else if (token == "set") {
+                        tokens.push_back(Token({.type = TokenType::SET}));
+                    } else if (token == "to") {
+                        tokens.push_back(Token({.type = TokenType::TO}));
+                    } else if (token == "if") {
+                        tokens.push_back(Token({.type = TokenType::IF}));
+                    } else if (token == "elif") {
+                        tokens.push_back(Token({.type = TokenType::ELIF}));
+                    } else if (token == "else") {
+                        tokens.push_back(Token({.type = TokenType::ELSE}));
+                    } else if (token == "while") {
+                        tokens.push_back(Token({.type = TokenType::WHILE}));
                     }
                     else {
-                        tokens.push_back(Token({TokenType::IDENTIFIER, token}));
+                        tokens.push_back(Token({.type = TokenType::IDENTIFIER, .value = token}));
                     }
 
                 } else {

@@ -13,6 +13,16 @@ _start:
 	mov rbx, 1
 	mov rcx, [rsp + 0]
 	imul rbx, rcx
+	add rax, rbx
+	mov rbx, 1
+	mov rcx, 1
+	imul rbx, rcx
+	add rax, rbx
+	mov [rsp + 0], rax
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, [rsp + 0]
+	imul rbx, rcx
 	mov rcx, 6
 	imul rbx, rcx
 	add rax, rbx
