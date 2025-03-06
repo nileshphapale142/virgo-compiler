@@ -10,8 +10,8 @@ std::string Token::tokenTypeToString() const {
         return "SEMICOLON";
     case TokenType::INTEGER:
         return "INTEGER";
-    case TokenType::PRINT:
-        return "PRINT";
+    case TokenType::SHOW:
+        return "SHOW";
     case TokenType::PRINTLN:
         return "PRINTLN";
     case TokenType::PLUS:

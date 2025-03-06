@@ -153,8 +153,8 @@ std::vector<Token> Scanner::scan() {
                         token.push_back(consume().value());
                     }
 
-                    if (token == "print") {
-                        tokens.push_back(Token({TokenType::PRINT}));
+                    if (token == "show") {
+                        tokens.push_back(Token({TokenType::SHOW}));
                     } else if (token == "println") {
                         tokens.push_back(Token({TokenType::PRINTLN}));
                     } else if (token == "let") {

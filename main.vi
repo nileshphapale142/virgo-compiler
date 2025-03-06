@@ -1,20 +1,2 @@
-let a be 0;
-let b be 1;
-
-
-println(b);
-
-while b < 5 {
-    let c be a + b;
-    a = b;
-    b = c;
-
-    if b == 3  {
-        c = 5;
-    } else {
-        println(-1);
-    }
-
-    println(c);
-}
-
+let x be 5;
+show x * 4

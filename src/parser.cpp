@@ -83,7 +83,7 @@ std::optional<NodeStmt*> Parser::parse_stmt() {
 std::optional<NodePrint*> Parser::parse_print() {
 
 	if (!peek().has_value() || (
-	peek().value().type != TokenType::PRINT &&
+	peek().value().type != TokenType::SHOW &&
 	peek().value().type != TokenType::PRINTLN)) return std::nullopt;
 
 	auto* print_node = allocator->allocate<NodePrint>();
@@ -91,29 +91,8 @@ std::optional<NodePrint*> Parser::parse_print() {
 	print_node->is_println = peek().value().type == TokenType::PRINTLN;
 
 	consume();
-
-	if (!peek().has_value() || peek().value().type != TokenType::LEFT_PAREN) {
-		std::cerr << "Missing '(' " << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
-	consume();
 	
 	print_node->expr = parse_expr();
-	
-	if (!peek().has_value() || peek().value().type != TokenType::RIGHT_PAREN) {
-		std::cerr << "Missing ')'" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
-	consume();
-
-	if (!peek().has_value() || peek().value().type != TokenType::SEMICOLON) {
-		std::cerr << "Missing ';'" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
-	consume();
 
 	return  print_node;
 }
