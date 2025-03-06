@@ -167,6 +167,8 @@ std::vector<Token> Scanner::scan() {
                         tokens.push_back(Token({TokenType::ELSE}));
                     } else if (token == "while") {
                         tokens.push_back(Token({TokenType::WHILE}));
+                    } else if (token == "be") {
+                        tokens.push_back(Token({.type = TokenType::BE}));
                     }
                     else {
                         tokens.push_back(Token({TokenType::IDENTIFIER, token}));

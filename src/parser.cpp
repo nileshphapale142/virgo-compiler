@@ -135,8 +135,8 @@ std::optional<NodeDeclaration *> Parser::parse_declaration() {
 	decl->ident->name = consume().value();
 
 
-	if (!peek().has_value() || peek().value().type != TokenType::EQUAL) {
-		std::cerr << "Expected = sign" << std::endl;
+	if (!peek().has_value() || peek().value().type != TokenType::BE) {
+		std::cerr << "Expected be keyword" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
