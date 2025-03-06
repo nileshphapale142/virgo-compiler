@@ -165,16 +165,21 @@ std::vector<Token> Scanner::scan() {
                         tokens.push_back(Token({.type = TokenType::SET}));
                     } else if (token == "to") {
                         tokens.push_back(Token({.type = TokenType::TO}));
+                    } else if (token == "repeat") {
+                        tokens.push_back(Token({.type = TokenType::REPEAT}));
+                    } else if (token == "while") {
+                        tokens.push_back(Token({.type = TokenType::WHILE}));
+                    } else if (token == "do") {
+                        tokens.push_back(Token({.type = TokenType::DO}));
+                    } else if (token == "end") {
+                        tokens.push_back(Token({.type = TokenType::END}));
                     } else if (token == "if") {
                         tokens.push_back(Token({.type = TokenType::IF}));
                     } else if (token == "elif") {
                         tokens.push_back(Token({.type = TokenType::ELIF}));
                     } else if (token == "else") {
                         tokens.push_back(Token({.type = TokenType::ELSE}));
-                    } else if (token == "while") {
-                        tokens.push_back(Token({.type = TokenType::WHILE}));
-                    }
-                    else {
+                    } else {
                         tokens.push_back(Token({.type = TokenType::IDENTIFIER, .value = token}));
                     }
 

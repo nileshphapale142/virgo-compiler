@@ -10,7 +10,7 @@ $$
 \begin{array}{rcl}
     \langle program \rangle & ::= & \langle stmt-list \rangle \\
     \langle stmt-list \rangle & ::= & \epsilon \space | \space \langle stmt \rangle \space  | \space \langle stmt-list \rangle \space \langle stmt \rangle \\
-    \langle stmt \rangle & ::= & \langle print \rangle  \space | \space \langle println \rangle \space | \space \langle declaration \rangle \space | \space \langle assignment \rangle \space | \space \langle increment \rangle \space | \space \langle decrement \rangle \space | \space \langle scope \rangle \space | \space \langle condition \rangle \space | \space \langle comment \rangle \space | \space \langle while-loop \rangle\\
+    \langle stmt \rangle & ::= & \langle print \rangle  \space | \space \langle println \rangle \space | \space \langle declaration \rangle \space | \space \langle assignment \rangle \space | \space \langle increment \rangle \space | \space \langle decrement \rangle \space |  \space \langle condition \rangle \space | \space \langle comment \rangle \space | \space \langle while-loop \rangle\\
     \langle print \rangle & ::= & \texttt{"show "}  \langle expr \rangle \\
     \langle println \rangle & ::= & \texttt{"showline "} \langle expr \rangle\\
     \langle declaration \rangle & ::= & \texttt{"create "} \langle identifier \rangle \texttt{" as "} \langle expr \rangle   \\

@@ -9,6 +9,22 @@ _start:
 	imul rbx, rcx
 	add rax, rbx
 	push rax
+while_start_1:
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, [rsp + 0]
+	imul rbx, rcx
+	add rax, rbx
+	push rax
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 0
+	imul rbx, rcx
+	add rax, rbx
+	mov rbx, rax
+	pop rax
+	cmp rax, rbx
+	jle while_end_1
 	mov rax, 0
 	mov rbx, 1
 	mov rcx, [rsp + 0]
@@ -17,30 +33,11 @@ _start:
 	mov rbx, 1
 	mov rcx, 1
 	imul rbx, rcx
-	add rax, rbx
+	sub rax, rbx
 	mov [rsp + 0], rax
 	mov rax, 0
 	mov rbx, 1
 	mov rcx, [rsp + 0]
-	imul rbx, rcx
-	mov rcx, 6
-	imul rbx, rcx
-	add rax, rbx
-	lea rdi, [print_str + 19]
-	mov r8, rdi
-	call itoa
-	mov rdx, r8
-	sub rdx, rdi
-	inc rdx
-	mov rax, 1
-	mov rsi, rdi
-	mov rdi, 1
-	syscall
-	mov rax, 0
-	mov rbx, 1
-	mov rcx, [rsp + 0]
-	imul rbx, rcx
-	mov rcx, 4
 	imul rbx, rcx
 	add rax, rbx
 	lea rdi, [print_str + 19]
@@ -55,6 +52,8 @@ _start:
 	mov rsi, rdi
 	mov rdi, 1
 	syscall
+	jmp while_start_1
+while_end_1:
 	mov rax, 60
 	xor rdi, rdi
 	syscall

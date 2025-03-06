@@ -60,10 +60,10 @@ std::optional<NodeStmt*> Parser::parse_stmt() {
 		return stmt;
 	}
 
-	if (auto scope = parse_scope()) {
-		stmt->stmt = scope.value();
-		return stmt;
-	}
+	// if (auto scope = parse_scope()) {
+	// 	stmt->stmt = scope.value();
+	// 	return stmt;
+	// }
 
 	if (auto cond_stmt = parse_condition()) {
 		stmt->stmt = cond_stmt.value();
@@ -207,7 +207,14 @@ std::optional<NodeDecrement*> Parser::parse_decrement() {
 
 
 std::optional<NodeWhile* > Parser::parse_while() {
-	if (!peek().has_value() || peek().value().type != TokenType::WHILE) return std::nullopt;
+	if (!peek().has_value() || peek().value().type != TokenType::REPEAT) return std::nullopt;
+
+	consume();
+
+	if (!peek().has_value() || peek().value().type != TokenType::WHILE) {
+		std::cerr << "Expected \"while\"" << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
 	consume();
 
@@ -215,23 +222,38 @@ std::optional<NodeWhile* > Parser::parse_while() {
 	auto while_node = allocator->allocate<NodeWhile>();
 	while_node->bool_expr = parse_bool_expr();
 
+	if (!peek().has_value() || peek().value().type != TokenType::DO) {
+		std::cerr << "Expected \"while\"" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	consume();
+
 	if (const auto scope = parse_scope()) {
 		while_node->scope = scope.value();
 	} else {
-		std::cerr << "Unexpected end of while statement" << std::endl;
+		if (!peek().has_value() || peek().value().type != TokenType::END) {
+			std::cerr << "Unexpected \"end\" statement" << std::endl;
+			exit(EXIT_FAILURE);
+		}
+
+		consume();
+	}
+
+	if (!peek().has_value() || peek().value().type != TokenType::REPEAT) {
+		std::cerr << "Expected \"repeat\" after end" << std::endl;
 		exit(EXIT_FAILURE);
 	}
+
+	consume();
 
 	return while_node;
 }
 
 
 std::optional<NodeScope*> Parser::parse_scope() {
-	if (!peek().has_value() || peek().value().type != TokenType::LEFT_CURLY) return std::nullopt;
+	if (!peek().has_value()) return std::nullopt;
 
-	consume();
-
-	// auto* scope = new NodeScope();
 	auto scope = allocator->allocate<NodeScope>();
 
 	NodeStmtList* stmt_list = parse_stmt_list();
@@ -239,8 +261,8 @@ std::optional<NodeScope*> Parser::parse_scope() {
 	scope->stmt_list = stmt_list;
 
 
-	if (!peek().has_value() || peek().value().type != TokenType::RIGHT_CURLY) {
-		std::cerr << "Expected  '}'" << std::endl;
+	if (!peek().has_value() || peek().value().type != TokenType::END) {
+		std::cerr << "Expected  \"end\"" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 

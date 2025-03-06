@@ -1,4 +1,6 @@
 create x as 5
-set x to x + 1
-show x * 6
-showline x * 4
+
+repeat while x > 0 do
+    set x to x - 1
+    showline x
+end repeat
