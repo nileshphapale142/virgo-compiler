@@ -178,6 +178,7 @@ void CodeGenerator::handle_bool_expr(const NodeBoolExpr *bool_expr, const std::s
 
 		switch (bool_expr->bool_operator.value().type) {
 			case TokenType::DOUBLE_EQUAL:
+				case TokenType::EQUALS:
 				jmp_if = "jne";
 			break;
 			case TokenType::NOT_EQUAL:

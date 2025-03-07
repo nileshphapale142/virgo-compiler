@@ -181,6 +181,8 @@ std::vector<Token> Scanner::scan() {
                         tokens.push_back(Token({.type = TokenType::OTHERWISE}));
                     } else if (token == "then") {
                         tokens.push_back(Token({.type = TokenType::THEN}));
+                    } else if (token == "equals") {
+                        tokens.push_back(Token({.type = TokenType::EQUALS}));
                     } else {
                         tokens.push_back(Token({.type = TokenType::IDENTIFIER, .value = token}));
                     }

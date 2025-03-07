@@ -397,6 +397,7 @@ NodeBoolExpr* Parser::parse_bool_expr() {
 	if (!peek().has_value() ||
 		(
 			peek().value().type != TokenType::DOUBLE_EQUAL &&
+			peek().value().type != TokenType::EQUALS &&
 			peek().value().type != TokenType::GREATER_THAN &&
 			peek().value().type != TokenType::LESS_THAN &&
 			peek().value().type != TokenType::NOT_EQUAL &&

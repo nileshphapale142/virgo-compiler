@@ -24,9 +24,6 @@ private:
     std::optional<NodeDecrement*> parse_decrement();
     std::optional<NodeWhile*> parse_while();
     std::optional<NodeScope*> parse_scope();
-    // std::optional<NodeScope*> parse_scope_if();
-    // std::optional<NodeScope*> parse_scope_elif();
-    // std::optional<NodeScope*> parse_scope_else();
     std::optional<NodeCondition*> parse_condition();
     std::optional<NodeIf*> parse_if();
     std::optional<NodeElif*> parse_elif();

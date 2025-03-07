@@ -1,19 +1,6 @@
-create x as 5
+create x as 2
 
-repeat while x > 0 do
-    set x to x - 1
 
-    check if x >= 3 then
-        check if x > 0 then
-            check if x > 2 then
-                showline 0
-            end check
-        end check
-
-    otherwise if x >= 1 then
-        showline -6
-    otherwise then
-        showline -9
-    end check
-
-end repeat
+check if x equals 2 then
+    showline x
+end check
