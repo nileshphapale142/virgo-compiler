@@ -52,7 +52,37 @@ while_start_1:
 	jl if_end_1
 	mov rax, 0
 	mov rbx, 1
-	mov rcx, 3
+	mov rcx, [rsp + 0]
+	imul rbx, rcx
+	add rax, rbx
+	push rax
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 0
+	imul rbx, rcx
+	add rax, rbx
+	mov rbx, rax
+	pop rax
+	cmp rax, rbx
+	jle if_end_2
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, [rsp + 0]
+	imul rbx, rcx
+	add rax, rbx
+	push rax
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 2
+	imul rbx, rcx
+	add rax, rbx
+	mov rbx, rax
+	pop rax
+	cmp rax, rbx
+	jle if_end_3
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 0
 	imul rbx, rcx
 	add rax, rbx
 	lea rdi, [print_str + 19]
@@ -67,6 +97,12 @@ while_start_1:
 	mov rsi, rdi
 	mov rdi, 1
 	syscall
+	jmp cond_end_3
+if_end_3:
+cond_end_3:
+	jmp cond_end_2
+if_end_2:
+cond_end_2:
 	jmp cond_end_1
 if_end_1:
 	mov rax, 0
@@ -86,9 +122,9 @@ if_end_1:
 	jl elif_end_1_1
 	mov rax, 0
 	mov rbx, 1
-	mov rcx, 1
+	mov rcx, 6
 	imul rbx, rcx
-	add rax, rbx
+	sub rax, rbx
 	lea rdi, [print_str + 19]
 	mov r8, rdi
 	call itoa
@@ -105,7 +141,7 @@ if_end_1:
 elif_end_1_1:
 	mov rax, 0
 	mov rbx, 1
-	mov rcx, 1
+	mov rcx, 9
 	imul rbx, rcx
 	sub rax, rbx
 	lea rdi, [print_str + 19]

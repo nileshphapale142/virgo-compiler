@@ -335,15 +335,17 @@ std::optional<NodeIf*> Parser::parse_if() {
 
 
 std::optional<NodeElif*> Parser::parse_elif() {
-	if (!peek().has_value() || peek().value().type != TokenType::OTHERWISE || !peek(1).has_value() || peek(1).value().type != TokenType::IF) {
-		// TODO: Think about errors
-
-		if (peek(1).value().type != TokenType::THEN) {
-			std::cerr << "Expected \"if\" after otherwise" << std::endl;
-			exit(EXIT_FAILURE);
-		}
+	if (!peek().has_value() || peek().value().type != TokenType::OTHERWISE) {
 		return std::nullopt;
 	}
+
+	if (!peek(1).has_value() || (peek(1).value().type != TokenType::IF && peek(1).value().type != TokenType::THEN)) {
+		std::cerr << "Expected \"if\" after otherwise" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	if (peek(1).value().type != TokenType::IF) return std::nullopt;
+
 	consume();
 	consume();
 
