@@ -40,6 +40,21 @@ while_start_1:
 	mov rcx, [rsp + 0]
 	imul rbx, rcx
 	add rax, rbx
+	push rax
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 3
+	imul rbx, rcx
+	add rax, rbx
+	mov rbx, rax
+	pop rax
+	cmp rax, rbx
+	jl if_end_1
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 3
+	imul rbx, rcx
+	add rax, rbx
 	lea rdi, [print_str + 19]
 	mov r8, rdi
 	call itoa
@@ -52,6 +67,60 @@ while_start_1:
 	mov rsi, rdi
 	mov rdi, 1
 	syscall
+	jmp cond_end_1
+if_end_1:
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, [rsp + 0]
+	imul rbx, rcx
+	add rax, rbx
+	push rax
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 1
+	imul rbx, rcx
+	add rax, rbx
+	mov rbx, rax
+	pop rax
+	cmp rax, rbx
+	jl elif_end_1_1
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 1
+	imul rbx, rcx
+	add rax, rbx
+	lea rdi, [print_str + 19]
+	mov r8, rdi
+	call itoa
+	mov rdx, r8
+	sub rdx, rdi
+	inc rdx
+	mov byte [r8 + 1], 10
+	inc rdx
+	mov rax, 1
+	mov rsi, rdi
+	mov rdi, 1
+	syscall
+	jmp cond_end_1
+elif_end_1_1:
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 1
+	imul rbx, rcx
+	sub rax, rbx
+	lea rdi, [print_str + 19]
+	mov r8, rdi
+	call itoa
+	mov rdx, r8
+	sub rdx, rdi
+	inc rdx
+	mov byte [r8 + 1], 10
+	inc rdx
+	mov rax, 1
+	mov rsi, rdi
+	mov rdi, 1
+	syscall
+cond_end_1:
 	jmp while_start_1
 while_end_1:
 	mov rax, 60

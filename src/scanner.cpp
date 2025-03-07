@@ -173,12 +173,14 @@ std::vector<Token> Scanner::scan() {
                         tokens.push_back(Token({.type = TokenType::DO}));
                     } else if (token == "end") {
                         tokens.push_back(Token({.type = TokenType::END}));
+                    } else if (token == "check") {
+                        tokens.push_back(Token({.type = TokenType::CHECK}));
                     } else if (token == "if") {
                         tokens.push_back(Token({.type = TokenType::IF}));
-                    } else if (token == "elif") {
-                        tokens.push_back(Token({.type = TokenType::ELIF}));
-                    } else if (token == "else") {
-                        tokens.push_back(Token({.type = TokenType::ELSE}));
+                    } else if (token == "otherwise") {
+                        tokens.push_back(Token({.type = TokenType::OTHERWISE}));
+                    } else if (token == "then") {
+                        tokens.push_back(Token({.type = TokenType::THEN}));
                     } else {
                         tokens.push_back(Token({.type = TokenType::IDENTIFIER, .value = token}));
                     }

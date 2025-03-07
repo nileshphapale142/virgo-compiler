@@ -60,11 +60,6 @@ std::optional<NodeStmt*> Parser::parse_stmt() {
 		return stmt;
 	}
 
-	// if (auto scope = parse_scope()) {
-	// 	stmt->stmt = scope.value();
-	// 	return stmt;
-	// }
-
 	if (auto cond_stmt = parse_condition()) {
 		stmt->stmt = cond_stmt.value();
 		return stmt;
@@ -187,7 +182,6 @@ std::optional<NodeDecrement*> Parser::parse_decrement() {
 		|| !peek(2).has_value() || peek(2).value().type != TokenType::MINUS
 		) return std::nullopt;
 
-	// auto decrement = new NodeDecrement({.ident = new NodeIdentifier({.name = consume().value()})});
 	auto decrement = allocator->allocate<NodeDecrement>();
 	decrement->ident = allocator->allocate<NodeIdentifier>();
 	decrement->ident->name = consume().value();
@@ -218,12 +212,11 @@ std::optional<NodeWhile* > Parser::parse_while() {
 
 	consume();
 
-	// auto while_node = new NodeWhile({.bool_expr = parse_bool_expr()});
 	auto while_node = allocator->allocate<NodeWhile>();
 	while_node->bool_expr = parse_bool_expr();
 
 	if (!peek().has_value() || peek().value().type != TokenType::DO) {
-		std::cerr << "Expected \"while\"" << std::endl;
+		std::cerr << "Expected \"do\"" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -231,14 +224,14 @@ std::optional<NodeWhile* > Parser::parse_while() {
 
 	if (const auto scope = parse_scope()) {
 		while_node->scope = scope.value();
-	} else {
-		if (!peek().has_value() || peek().value().type != TokenType::END) {
-			std::cerr << "Unexpected \"end\" statement" << std::endl;
-			exit(EXIT_FAILURE);
-		}
-
-		consume();
 	}
+
+	if (!peek().has_value() || peek().value().type != TokenType::END) {
+		std::cerr << "Expected  \"end\"" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	consume();
 
 	if (!peek().has_value() || peek().value().type != TokenType::REPEAT) {
 		std::cerr << "Expected \"repeat\" after end" << std::endl;
@@ -260,16 +253,15 @@ std::optional<NodeScope*> Parser::parse_scope() {
 
 	scope->stmt_list = stmt_list;
 
-
-	if (!peek().has_value() || peek().value().type != TokenType::END) {
-		std::cerr << "Expected  \"end\"" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
-	consume();
-
 	return scope;
 }
+
+// std::optional<NodeScope*> Parser::parse_scope_if() {
+// 	if (!peek().has_value()) return std::nullopt;
+//
+// 	auto scope = allocator->allocate<NodeScope>();
+//
+// }
 
 std::optional<NodeCondition*> Parser::parse_condition() {
 
@@ -277,7 +269,6 @@ std::optional<NodeCondition*> Parser::parse_condition() {
 
 	if (!if_cond) return std::nullopt;
 
-	// auto condition = new NodeCondition();
 	auto condition = allocator->allocate<NodeCondition>();
 
 	condition->if_cond = if_cond.value();
@@ -296,24 +287,47 @@ std::optional<NodeCondition*> Parser::parse_condition() {
 		condition->else_cond = else_cond.value();
 	}
 
+	if (!peek().has_value() || peek().value().type != TokenType::END) {
+		std::cerr << "Expected \"end\" statement" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	consume();
+
+	if (!peek().has_value() || peek().value().type != TokenType::CHECK) {
+		std::cerr << "Expected \"check\" after end" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	consume();
+
 	return condition;
 }
 
 std::optional<NodeIf*> Parser::parse_if() {
-	if (!peek().has_value() || peek().value().type != TokenType::IF) return std::nullopt;
+	if (!peek().has_value() || peek().value().type != TokenType::CHECK) return std::nullopt;
+	consume();
 
-	// auto* if_node = new NodeIf();
-	auto if_node = allocator->allocate<NodeIf>();
+	if (!peek().has_value() || peek().value().type != TokenType::IF) {
+		std::cerr << "Expected \"if\" after check" << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
 	consume();
 
+	auto if_node = allocator->allocate<NodeIf>();
+
 	if_node->bool_expr = parse_bool_expr();
+
+	if (!peek().has_value() || peek().value().type != TokenType::THEN) {
+		std::cerr << "Expected \"then\"" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	consume();
 
 	if (const auto scope = parse_scope()) {
 		if_node->scope = scope.value();
-	} else {
-		std::cerr << "Missing '{'" << std::endl;
-		exit(EXIT_FAILURE);
 	}
 
 	return if_node;
@@ -321,38 +335,52 @@ std::optional<NodeIf*> Parser::parse_if() {
 
 
 std::optional<NodeElif*> Parser::parse_elif() {
-	if (!peek().has_value() || peek().value().type != TokenType::ELIF) return std::nullopt;
+	if (!peek().has_value() || peek().value().type != TokenType::OTHERWISE || !peek(1).has_value() || peek(1).value().type != TokenType::IF) {
+		// TODO: Think about errors
 
-	// auto* elif_node = new NodeElif();
+		if (peek(1).value().type != TokenType::THEN) {
+			std::cerr << "Expected \"if\" after otherwise" << std::endl;
+			exit(EXIT_FAILURE);
+		}
+		return std::nullopt;
+	}
+	consume();
+	consume();
+
 	auto elif_node = allocator->allocate<NodeElif>();
+	elif_node->bool_expr = parse_bool_expr();
+
+	if (!peek().has_value() || peek().value().type != TokenType::THEN) {
+		std::cerr << "Expected \"then\"" << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
 	consume();
 
-	elif_node->bool_expr = parse_bool_expr();
 
 	if (const auto scope = parse_scope()) {
 		elif_node->scope = scope.value();
-	} else {
-		std::cerr << "Missing '{'" << std::endl;
-		exit(EXIT_FAILURE);
 	}
 
 	return elif_node;
 }
 
 std::optional<NodeElse*> Parser::parse_else() {
-	if (!peek().has_value() || peek().value().type != TokenType::ELSE) return std::nullopt;
+	if (!peek().has_value() || peek().value().type != TokenType::OTHERWISE) return std::nullopt;
 
 	consume();
 
-	// auto *else_node = new NodeElse();
+	if (!peek().has_value() || peek().value().type != TokenType::THEN) {
+		std::cerr << "Expected \"then\" after otherwise" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	consume();
+
 	auto else_node = allocator->allocate<NodeElse>();
 
 	if (const auto scope = parse_scope()) {
 		else_node->scope = scope.value();
-	} else {
-		std::cerr << "Missing '{'" << std::endl;
-		exit(EXIT_FAILURE);
 	}
 
 	return else_node;
@@ -360,7 +388,6 @@ std::optional<NodeElse*> Parser::parse_else() {
 
 
 NodeBoolExpr* Parser::parse_bool_expr() {
-	// auto* bool_expr = new NodeBoolExpr();
 	const auto bool_expr = allocator->allocate<NodeBoolExpr>();
 
 	bool_expr->expr1 = parse_expr();

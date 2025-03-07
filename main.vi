@@ -2,5 +2,11 @@ create x as 5
 
 repeat while x > 0 do
     set x to x - 1
-    showline x
+    check if x >= 3 then
+        showline 3
+    otherwise if x >= 1 then
+        showline 1
+    otherwise then
+        showline -1
+    end check
 end repeat
