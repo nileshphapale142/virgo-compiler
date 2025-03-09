@@ -17,13 +17,13 @@ _start:
 	push rax
 	mov rax, 0
 	mov rbx, 1
-	mov rcx, 4
+	mov rcx, 1
 	imul rbx, rcx
 	add rax, rbx
 	mov rbx, rax
 	pop rax
 	cmp rax, rbx
-	jne if_end_1
+	jle if_end_1
 	mov rax, 0
 	mov rbx, 1
 	mov rcx, [rsp + 0]

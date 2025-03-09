@@ -394,18 +394,45 @@ NodeBoolExpr* Parser::parse_bool_expr() {
 
 	bool_expr->expr1 = parse_expr();
 
-	if (peek().has_value() && peek().value().type == TokenType::NOT) {
-		if (!peek(1).has_value()
-			|| peek(1).value().type != TokenType::EQUALS) {
-			std::cerr << "Expected \"equals\" after not" << std::endl;
-			exit(EXIT_FAILURE);
+	if (peek().has_value()) {
+		if (peek().value().type == TokenType::NOT) {
+			if (!peek(1).has_value()
+				|| peek(1).value().type != TokenType::EQUALS) {
+				std::cerr << "Expected \"equals\" after not" << std::endl;
+				exit(EXIT_FAILURE);
+			}
+			bool_expr->bool_operator = Token({.type = TokenType::NOT_EQUAL});
+			consume();
+			consume();
+
+			goto parse_expr2;
 		}
 
-		bool_expr->bool_operator = Token({.type = TokenType::NOT_EQUAL});
-		consume();
-		consume();
+		if (peek().value().type == TokenType::LESS) {
+			if (!peek(1).has_value() || peek(1).value().type != TokenType::THAN) {
+				std::cerr << "Expected \"than\" after less" << std::endl;
+				exit(EXIT_FAILURE);
+			}
 
-		goto parse_expr2;
+			bool_expr->bool_operator = Token({.type = TokenType::LESS_THAN});
+			consume();
+			consume();
+
+			goto parse_expr2;
+		}
+
+		if (peek().value().type == TokenType::GREATER) {
+			if (!peek(1).has_value() || peek(1).value().type != TokenType::THAN) {
+				std::cerr << "Expected \"than\" after greater" << std::endl;
+				exit(EXIT_FAILURE);
+			}
+
+			bool_expr->bool_operator = Token({.type = TokenType::GREATER_THAN});
+			consume();
+			consume();
+
+			goto parse_expr2;
+		}
 	}
 
 	if (!peek().has_value() ||

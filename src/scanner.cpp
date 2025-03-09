@@ -185,6 +185,12 @@ std::vector<Token> Scanner::scan() {
                         tokens.push_back(Token({.type = TokenType::EQUALS}));
                     } else if (token == "not") {
                         tokens.push_back(Token({.type = TokenType::NOT}));
+                    } else if (token == "less") {
+                        tokens.push_back(Token({.type = TokenType::LESS}));
+                    } else if (token == "greater") {
+                        tokens.push_back(Token({.type = TokenType::GREATER}));
+                    } else if (token == "than") {
+                        tokens.push_back(Token({.type = TokenType::THAN}));
                     } else {
                         tokens.push_back(Token({.type = TokenType::IDENTIFIER, .value = token}));
                     }
