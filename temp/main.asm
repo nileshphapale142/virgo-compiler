@@ -17,7 +17,7 @@ _start:
 	push rax
 	mov rax, 0
 	mov rbx, 1
-	mov rcx, 2
+	mov rcx, 4
 	imul rbx, rcx
 	add rax, rbx
 	mov rbx, rax
@@ -43,6 +43,40 @@ _start:
 	syscall
 	jmp cond_end_1
 if_end_1:
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, [rsp + 0]
+	imul rbx, rcx
+	add rax, rbx
+	push rax
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 3
+	imul rbx, rcx
+	add rax, rbx
+	mov rbx, rax
+	pop rax
+	cmp rax, rbx
+	je elif_end_1_1
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 3
+	imul rbx, rcx
+	add rax, rbx
+	lea rdi, [print_str + 19]
+	mov r8, rdi
+	call itoa
+	mov rdx, r8
+	sub rdx, rdi
+	inc rdx
+	mov byte [r8 + 1], 10
+	inc rdx
+	mov rax, 1
+	mov rsi, rdi
+	mov rdi, 1
+	syscall
+	jmp cond_end_1
+elif_end_1_1:
 cond_end_1:
 	mov rax, 60
 	xor rdi, rdi

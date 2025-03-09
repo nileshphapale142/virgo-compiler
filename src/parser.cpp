@@ -394,6 +394,20 @@ NodeBoolExpr* Parser::parse_bool_expr() {
 
 	bool_expr->expr1 = parse_expr();
 
+	if (peek().has_value() && peek().value().type == TokenType::NOT) {
+		if (!peek(1).has_value()
+			|| peek(1).value().type != TokenType::EQUALS) {
+			std::cerr << "Expected \"equals\" after not" << std::endl;
+			exit(EXIT_FAILURE);
+		}
+
+		bool_expr->bool_operator = Token({.type = TokenType::NOT_EQUAL});
+		consume();
+		consume();
+
+		goto parse_expr2;
+	}
+
 	if (!peek().has_value() ||
 		(
 			peek().value().type != TokenType::DOUBLE_EQUAL &&
@@ -406,6 +420,7 @@ NodeBoolExpr* Parser::parse_bool_expr() {
 
 	bool_expr->bool_operator = consume().value();
 
+	parse_expr2:
 	bool_expr->expr2 = parse_expr();
 
 	return bool_expr;
@@ -414,7 +429,6 @@ NodeBoolExpr* Parser::parse_bool_expr() {
 
 
 NodeExpr* Parser::parse_expr() {
-	// auto* expr = new NodeExpr();
 	const auto expr = allocator->allocate<NodeExpr>();
 
 	if (peek().has_value() && (peek().value().type == TokenType::PLUS || peek().value().type == TokenType::MINUS)) {

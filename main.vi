@@ -1,6 +1,7 @@
 create x as 2
 
-
-check if x equals 2 then
+check if x equals 4 then
     showline x
+otherwise if x not equals 3 then
+    showline 3
 end check
