@@ -34,4 +34,7 @@ private:
     std::optional<NodeFactor*> parse_factor();
     std::optional<Token> peek(int offset = 0);
     std::optional<Token> consume();
+    static void throw_error(const std::string& msg);
+    void throw_error_if_not(TokenType expected_token_type);
+
 };

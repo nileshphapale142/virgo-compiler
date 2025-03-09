@@ -15,8 +15,7 @@ NodeProgram* Parser::parse() {
 	program->stmt_list = parse_stmt_list();
 
 	if (peek().has_value()) {
-		std::cerr << "Unknown Syntax" << std::endl;
-		exit(EXIT_FAILURE);
+		throw_error("Unknown Syntax");
 	}
 
 	return program;
@@ -40,6 +39,7 @@ std::optional<NodeStmt*> Parser::parse_stmt() {
 		stmt->stmt = print_stmt.value();
 		return stmt;
 	}
+
 	if (auto decl_stmt = parse_declaration()) {
 		stmt->stmt = decl_stmt.value();
 		return stmt;
@@ -100,19 +100,12 @@ std::optional<NodeDeclaration *> Parser::parse_declaration() {
 
 	consume();
 
-	if (!peek().has_value() || peek().value().type != TokenType::IDENTIFIER) {
-		std::cerr << "Expected an identifier" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::IDENTIFIER);
 
 	decl->ident = allocator->allocate<NodeIdentifier>();
 	decl->ident->name = consume().value();
 
-
-	if (!peek().has_value() || peek().value().type != TokenType::AS) {
-		std::cerr << "Expected \"as\" "<< std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::AS);
 
 	consume();
 
@@ -127,20 +120,13 @@ std::optional<NodeAssignment* > Parser::parse_assignment() {
 
 	consume();
 
-	if (!peek().has_value() || peek().value().type != TokenType::IDENTIFIER) {
-		std::cerr << "Expected an identifier" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::IDENTIFIER);
 
-	//todo: try to make it shorter
 	auto* assign = allocator->allocate<NodeAssignment>();
 	assign->ident = allocator->allocate<NodeIdentifier>();
 	assign->ident->name = consume().value();
 
-	if (!peek().has_value() || peek().value().type != TokenType::TO) {
-		std::cerr << "Expected \"to\" "<< std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::TO);
 
 	consume();
 
@@ -155,7 +141,6 @@ std::optional<NodeIncrement*> Parser::parse_increment() {
 		|| !peek(2).has_value() || peek(2).value().type != TokenType::PLUS
 		) return std::nullopt;
 
-	// auto increment = new NodeIncrement({.ident = new NodeIdentifier({.name = consume().value()})});
 	auto increment = allocator->allocate<NodeIncrement>();
 	increment->ident = allocator->allocate<NodeIdentifier>();
 	increment->ident->name = consume().value();
@@ -164,10 +149,7 @@ std::optional<NodeIncrement*> Parser::parse_increment() {
 	consume();
 	consume();
 
-	if (!peek().has_value() || peek().value().type != TokenType::SEMICOLON) {
-		std::cerr << "Expected ;" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::SEMICOLON);
 
 	consume();
 
@@ -189,10 +171,7 @@ std::optional<NodeDecrement*> Parser::parse_decrement() {
 	consume();
 	consume();
 
-	if (!peek().has_value() || peek().value().type != TokenType::SEMICOLON) {
-		std::cerr << "Expected ;" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::SEMICOLON);
 
 	consume();
 
@@ -205,20 +184,14 @@ std::optional<NodeWhile* > Parser::parse_while() {
 
 	consume();
 
-	if (!peek().has_value() || peek().value().type != TokenType::WHILE) {
-		std::cerr << "Expected \"while\"" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::WHILE);
 
 	consume();
 
 	auto while_node = allocator->allocate<NodeWhile>();
 	while_node->bool_expr = parse_bool_expr();
 
-	if (!peek().has_value() || peek().value().type != TokenType::DO) {
-		std::cerr << "Expected \"do\"" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::DO);
 
 	consume();
 
@@ -226,17 +199,11 @@ std::optional<NodeWhile* > Parser::parse_while() {
 		while_node->scope = scope.value();
 	}
 
-	if (!peek().has_value() || peek().value().type != TokenType::END) {
-		std::cerr << "Expected  \"end\"" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::END);
 
 	consume();
 
-	if (!peek().has_value() || peek().value().type != TokenType::REPEAT) {
-		std::cerr << "Expected \"repeat\" after end" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::REPEAT);
 
 	consume();
 
@@ -255,13 +222,6 @@ std::optional<NodeScope*> Parser::parse_scope() {
 
 	return scope;
 }
-
-// std::optional<NodeScope*> Parser::parse_scope_if() {
-// 	if (!peek().has_value()) return std::nullopt;
-//
-// 	auto scope = allocator->allocate<NodeScope>();
-//
-// }
 
 std::optional<NodeCondition*> Parser::parse_condition() {
 
@@ -287,18 +247,11 @@ std::optional<NodeCondition*> Parser::parse_condition() {
 		condition->else_cond = else_cond.value();
 	}
 
-	if (!peek().has_value() || peek().value().type != TokenType::END) {
-		std::cerr << "Expected \"end\" statement" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::END);
 
 	consume();
 
-	if (!peek().has_value() || peek().value().type != TokenType::CHECK) {
-		std::cerr << "Expected \"check\" after end" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
+	throw_error_if_not(TokenType::CHECK);
 	consume();
 
 	return condition;
@@ -308,10 +261,7 @@ std::optional<NodeIf*> Parser::parse_if() {
 	if (!peek().has_value() || peek().value().type != TokenType::CHECK) return std::nullopt;
 	consume();
 
-	if (!peek().has_value() || peek().value().type != TokenType::IF) {
-		std::cerr << "Expected \"if\" after check" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::IF);
 
 	consume();
 
@@ -319,10 +269,7 @@ std::optional<NodeIf*> Parser::parse_if() {
 
 	if_node->bool_expr = parse_bool_expr();
 
-	if (!peek().has_value() || peek().value().type != TokenType::THEN) {
-		std::cerr << "Expected \"then\"" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::THEN);
 
 	consume();
 
@@ -352,10 +299,7 @@ std::optional<NodeElif*> Parser::parse_elif() {
 	auto elif_node = allocator->allocate<NodeElif>();
 	elif_node->bool_expr = parse_bool_expr();
 
-	if (!peek().has_value() || peek().value().type != TokenType::THEN) {
-		std::cerr << "Expected \"then\"" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::THEN);
 
 	consume();
 
@@ -372,10 +316,7 @@ std::optional<NodeElse*> Parser::parse_else() {
 
 	consume();
 
-	if (!peek().has_value() || peek().value().type != TokenType::THEN) {
-		std::cerr << "Expected \"then\" after otherwise" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	throw_error_if_not(TokenType::THEN);
 
 	consume();
 
@@ -477,7 +418,6 @@ NodeExpr* Parser::parse_expr() {
 
 
 std::optional<NodeFactor*> Parser::parse_factor() {
-	// auto* factor = new NodeFactor();
 	auto factor = allocator->allocate<NodeFactor>();
 
 	while (const auto& term = parse_term()) {
@@ -497,7 +437,6 @@ std::optional<NodeFactor*> Parser::parse_factor() {
 std::optional<NodeTerm*> Parser::parse_term() {
 
 	if (peek().has_value()){
-		// auto* term = new NodeTerm();
 		auto term = allocator->allocate<NodeTerm>();
 
 		if (peek().value().type == TokenType::INTEGER) {
@@ -505,15 +444,13 @@ std::optional<NodeTerm*> Parser::parse_term() {
 		} else if (peek().value().type == TokenType::IDENTIFIER) {
 			term->value = new NodeIdentifier({consume().value()});
 		} else {
-			std::cout << "Expected an unsigned integer or an identifier" << std::endl;
-			exit(EXIT_FAILURE);
+			throw_error("Expected an unsigned integer or an identifier");
 		}
 		
 		return term;
 	}
 
-	std::cerr << "Expected an unsigned integer or an identifier" << std::endl;
-	exit(EXIT_FAILURE);
+	throw_error("Expected an unsigned integer or an identifier");
 }
 
 std::optional<Token> Parser::peek(const int offset) {
@@ -524,4 +461,54 @@ std::optional<Token> Parser::peek(const int offset) {
 std::optional<Token> Parser::consume() {
 	if (peek().has_value()) return tokens.at(curr_index++);
 	return std::nullopt;
+}
+
+void Parser::throw_error(const std::string& msg) {
+	std::cerr << msg << std::endl;
+	exit(EXIT_FAILURE);
+}
+
+void Parser::throw_error_if_not(TokenType expected_token_type) {
+	if (!peek().has_value() || peek().value().type != expected_token_type) {
+		switch (expected_token_type) {
+			case TokenType::IDENTIFIER:
+				throw_error("Expected an identifier");
+			break;
+			case TokenType::AS:
+				throw_error("Expected \"as\"");
+			break;
+			case TokenType::TO:
+				throw_error("Expected \"to\"");
+			break;
+			case TokenType::WHILE:
+				throw_error("Expected \"while\"");
+			break;
+			case TokenType::DO:
+				throw_error("Expected \"do\"");
+			break;
+			case TokenType::END:
+				throw_error("Expected \"end\"");
+			break;
+			case TokenType::REPEAT:
+				throw_error("Expected \"repeat\" after end");
+			break;
+			case TokenType::CHECK:
+				throw_error("Expected \"check\" after end");
+			break;
+			case TokenType::IF:
+				throw_error("Expected \"if\" after check");
+			break;
+			case TokenType::THEN:
+				throw_error("Expected \"then\"");
+			break;
+			case TokenType::EQUALS:
+				throw_error("Expected \"equals\" after not");
+			break;
+			case TokenType::THAN:
+				throw_error("Expected \"than\" after less/greater");
+			break;
+			default:
+				throw_error("Unexpected token");
+		}
+    }
 }
