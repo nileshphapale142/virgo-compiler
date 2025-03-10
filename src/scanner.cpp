@@ -191,6 +191,8 @@ std::vector<Token> Scanner::scan() {
                         tokens.push_back(Token({.type = TokenType::GREATER}));
                     } else if (token == "than") {
                         tokens.push_back(Token({.type = TokenType::THAN}));
+                    } else if (token == "or") {
+                        tokens.push_back(Token({.type = TokenType::OR}));
                     } else {
                         tokens.push_back(Token({.type = TokenType::IDENTIFIER, .value = token}));
                     }

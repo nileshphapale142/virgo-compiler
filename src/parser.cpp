@@ -355,9 +355,24 @@ NodeBoolExpr* Parser::parse_bool_expr() {
 				exit(EXIT_FAILURE);
 			}
 
+			consume();
+			consume();
+
+			if (peek().has_value() && peek().value().type == TokenType::OR) {
+				if (!peek(1).has_value() || peek(1).value().type != TokenType::EQUALS) {
+					throw_error("Expected \"equals\" after or");
+				}
+
+				consume();
+				consume();
+
+				bool_expr->bool_operator = Token({.type = TokenType::LESS_EQUAL});
+
+				goto parse_expr2;
+			}
+
 			bool_expr->bool_operator = Token({.type = TokenType::LESS_THAN});
-			consume();
-			consume();
+
 
 			goto parse_expr2;
 		}
@@ -368,9 +383,24 @@ NodeBoolExpr* Parser::parse_bool_expr() {
 				exit(EXIT_FAILURE);
 			}
 
+			consume();
+			consume();
+
+			if (peek().has_value() && peek().value().type == TokenType::OR) {
+				if (!peek(1).has_value() || peek(1).value().type != TokenType::EQUALS) {
+					throw_error("Expected \"equals\" after or");
+				}
+
+				consume();
+				consume();
+
+				bool_expr->bool_operator = Token({.type = TokenType::GREATER_EQUAL});
+
+				goto parse_expr2;
+			}
+
 			bool_expr->bool_operator = Token({.type = TokenType::GREATER_THAN});
-			consume();
-			consume();
+
 
 			goto parse_expr2;
 		}
@@ -451,6 +481,8 @@ std::optional<NodeTerm*> Parser::parse_term() {
 	}
 
 	throw_error("Expected an unsigned integer or an identifier");
+
+	return std::nullopt;
 }
 
 std::optional<Token> Parser::peek(const int offset) {
