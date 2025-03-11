@@ -1,7 +1,7 @@
  # Virgo Compiler
 
 Work in progress:
-**Child freindly syntax**
+**Loop with x times**
 
 ## Grammar
 
@@ -10,14 +10,12 @@ $$
 \begin{array}{rcl}
     \langle program \rangle & ::= & \langle stmt-list \rangle \\
     \langle stmt-list \rangle & ::= & \epsilon \space | \space \langle stmt \rangle \space  | \space \langle stmt-list \rangle \space \langle stmt \rangle \\
-    \langle stmt \rangle & ::= & \langle print \rangle  \space | \space \langle println \rangle \space | \space \langle declaration \rangle \space | \space \langle assignment \rangle \space | \space \langle increment \rangle \space | \space \langle decrement \rangle \space |  \space \langle condition \rangle \space | \space \langle comment \rangle \space | \space \langle while-loop \rangle\\
+    \langle stmt \rangle & ::= & \langle print \rangle  \space | \space \langle println \rangle \space | \space \langle declaration \rangle \space | \space \langle assignment \rangle \space | \space \langle condition \rangle \space | \space \langle comment \rangle \space | \space \langle while-loop \rangle\\
     \langle print \rangle & ::= & \texttt{"show "}  \langle expr \rangle \\
     \langle println \rangle & ::= & \texttt{"showline "} \langle expr \rangle\\
     \langle declaration \rangle & ::= & \texttt{"create "} \langle identifier \rangle \texttt{" as "} \langle expr \rangle   \\
     \langle assignment \rangle  &::= & \texttt{"set "}  \langle identifier \rangle  \texttt{" to "}  \langle expr \rangle\\
-    \langle while-loop \rangle & ::= & \texttt{"repeat while "} \langle condition \rangle \texttt{" do "} \newline & & \langle scope \rangle \newline & & \texttt{"end repeat"} \\
-    % \langle increment \rangle & ::= & \langle identifier \rangle \texttt{"++"}\\
-    % \langle decrement \rangle & ::= & \langle identifier \rangle \texttt{"--"}\\
+    \langle while-loop \rangle & ::= & \texttt{"repeat "} \space (\space \texttt{"while "} \langle condition \rangle \space | \space \langle expr \rangle \texttt{" times"} \space ) \space \texttt{" do "} \newline & & \langle scope \rangle \newline & & \texttt{"end repeat"} \\
     \langle condition \rangle & ::= & \langle if \rangle \space ( \space \epsilon \space | \space \langle elif-chain \rangle \space ) \space ( \space \epsilon \space | \space \langle else \rangle  \space ) \newline & & \texttt{"end check"}\\
     \langle if \rangle & ::= & \texttt{"check if "} \langle bool\_expr \rangle  \texttt{" then "} \langle scope \rangle\\
     \langle elif-chain \rangle & ::= & \langle elif \rangle \langle elif-chain \rangle \\
