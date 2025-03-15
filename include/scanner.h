@@ -11,6 +11,7 @@ class Scanner {
     private:
         std::optional<char> peek(int offset = 0);
         std::optional<char> consume();
+        void find_end_note();
 
         std::string code;
         int curr_index;

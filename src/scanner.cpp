@@ -12,35 +12,35 @@ std::vector<Token> Scanner::scan() {
 
         switch(const char c = consume().value()) {
             case '(':
-                tokens.push_back(Token{TokenType::LEFT_PAREN});
+                tokens.push_back(Token({.type = TokenType::LEFT_PAREN}));
             break;
 
             case ')':
-                tokens.push_back(Token({TokenType::RIGHT_PAREN}));
+                tokens.push_back(Token({.type = TokenType::RIGHT_PAREN}));
             break;
             
             case ';':
-                tokens.push_back(Token({TokenType::SEMICOLON}));
+                tokens.push_back(Token({.type = TokenType::SEMICOLON}));
             break;
             
             case '+':
-                tokens.push_back(Token({TokenType::PLUS}));
+                tokens.push_back(Token({.type = TokenType::PLUS}));
             break;
             
             case '-':
-                tokens.push_back(Token({TokenType::MINUS}));
+                tokens.push_back(Token({.type = TokenType::MINUS}));
             break;
 
             case '*':
-                tokens.push_back(Token({TokenType::STAR}));
+                tokens.push_back(Token({.type = TokenType::STAR}));
             break;
 
             case '{': 
-                tokens.push_back(Token({TokenType::LEFT_CURLY}));
+                tokens.push_back(Token({.type = TokenType::LEFT_CURLY}));
                 break;
             
             case '}':
-                tokens.push_back(Token({TokenType::RIGHT_CURLY}));
+                tokens.push_back(Token({.type = TokenType::RIGHT_CURLY}));
                 break;
 
             case '/': {
@@ -85,7 +85,7 @@ std::vector<Token> Scanner::scan() {
                             exit(EXIT_FAILURE);
                         }
                 } else {
-                    tokens.push_back(Token({TokenType::BACKWARD_SLASH}));
+                    tokens.push_back(Token({.type = TokenType::BACKWARD_SLASH}));
                 }
             }
             break;
@@ -94,36 +94,36 @@ std::vector<Token> Scanner::scan() {
             case '=': {
                 if (peek().has_value() && peek().value() == '=') {
                     consume();
-                    tokens.push_back(Token({TokenType::DOUBLE_EQUAL}));
+                    tokens.push_back(Token({.type = TokenType::DOUBLE_EQUAL}));
                 } else {
-                    tokens.push_back(Token({TokenType::EQUAL}));
+                    tokens.push_back(Token({.type = TokenType::EQUAL}));
                 }
             }
                 break;
             case '<':
                 if (peek().has_value() && peek().value() == '=') {
                     consume();
-                    tokens.push_back(Token({TokenType::LESS_EQUAL}));
+                    tokens.push_back(Token({.type = TokenType::LESS_EQUAL}));
                 } else {
-                    tokens.push_back(Token({TokenType::LESS_THAN}));
+                    tokens.push_back(Token({.type = TokenType::LESS_THAN}));
                 }
                 break;
 
             case '>':
                 if (peek().has_value() && peek().value() == '=') {
                     consume();
-                    tokens.push_back(Token({TokenType::GREATER_EQUAL}));
+                    tokens.push_back(Token({.type = TokenType::GREATER_EQUAL}));
                 } else {
-                    tokens.push_back(Token({TokenType::GREATER_THAN}));
+                    tokens.push_back(Token({.type = TokenType::GREATER_THAN}));
                 }
                 break;
 
             case '!': {
                 if (peek().has_value() && peek().value() == '=') {
                     consume();
-                    tokens.push_back(Token({TokenType::NOT_EQUAL}));
+                    tokens.push_back(Token({.type = TokenType::NOT_EQUAL}));
                 } else {
-                    tokens.push_back(Token({TokenType::EXCLAMATION_MARK}));
+                    tokens.push_back(Token({.type = TokenType::EXCLAMATION_MARK}));
                 }
             }
             case ' ':
@@ -142,14 +142,14 @@ std::vector<Token> Scanner::scan() {
                         integer.push_back(consume().value());
                     }
 
-                    tokens.push_back(Token({TokenType::INTEGER, integer}));
+                    tokens.push_back(Token({.type = TokenType::INTEGER, .value = integer}));
 
                 } else if (isalpha(c)) {
                     std::string token;
 
                     token.push_back(c);
 
-                    while (peek().has_value() && (isalpha(peek().value()) || isdigit(c))) {
+                    while (peek().has_value() && (isalpha(peek().value()) || isdigit(peek().value()))) {
                         token.push_back(consume().value());
                     }
 
@@ -193,6 +193,29 @@ std::vector<Token> Scanner::scan() {
                         tokens.push_back(Token({.type = TokenType::THAN}));
                     } else if (token == "or") {
                         tokens.push_back(Token({.type = TokenType::OR}));
+                    } else if (token == "note") {
+
+                        if (!peek().has_value()) {
+                            std::cerr << "Unexpected \"note\"" << std::endl;
+                            exit(EXIT_FAILURE);
+                        }
+
+                        while (iswspace(peek().value())) {
+                            consume();
+
+                            if (!peek().has_value()) {
+                                std::cerr << "Unexpected \"note\"" << std::endl;
+                                exit(EXIT_FAILURE);
+                            }
+                        }
+
+                        if (peek().value() != ':') {
+                            std::cerr << "Expected \":\" after note" << std::endl;
+                            exit(EXIT_FAILURE);
+                        }
+
+                        find_end_note();
+
                     } else {
                         tokens.push_back(Token({.type = TokenType::IDENTIFIER, .value = token}));
                     }
@@ -207,6 +230,56 @@ std::vector<Token> Scanner::scan() {
 
     return tokens;
 }
+
+void Scanner::find_end_note() {
+    std::string current_word = "";
+    bool found_end = false;
+    bool found_note = false;
+
+    while (peek().has_value()) {
+        current_word.clear();
+
+        while (peek().has_value() && isalpha(peek().value())) {
+            current_word.push_back(consume().value());
+        }
+
+        if (current_word == "end") {
+            found_end = true;
+
+            while (peek().has_value() && (isspace(peek().value()) || peek().value() == '\t' || peek().value() == '\n')) {
+                consume();
+            }
+
+            current_word.clear();
+            while (peek().has_value() && isalpha(peek().value())) {
+                current_word.push_back(consume().value());
+            }
+
+            if (current_word == "note") {
+                found_note = true;
+                break;
+            }
+            if (current_word == "repeat" || current_word == "check") {
+                found_end = false;
+                continue;
+            }
+
+            std::cerr << "Expected \"note\" after end" << std::endl;
+            exit(EXIT_FAILURE);
+
+        }
+
+        if (peek().has_value() && !isalpha(peek().value())) {
+            consume();
+        }
+    }
+
+    if (!found_end || !found_note) {
+        std::cerr << "End of note not found" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+}
+
 
 
 std::optional<char> Scanner::peek(int offset) {

@@ -1,13 +1,16 @@
+note:
 create x as 2
 
 repeat while x greater than 0 do
     set x to x - 1
-end repeat
-
-check if x less than or equals 2 then
+    check if x less than or equals 2 then
     showline x
 otherwise if x not equals 3 then
     showline 3
 end check
-note:
-end note
+end repeat
+
+end
+note
+
+showline 5 + 10
