@@ -30,9 +30,18 @@ struct NodeBoolExpr {
     std::optional<NodeExpr*> expr2;
 };
 
-struct NodeWhile {
+struct NodeRepeatWhile {
     NodeBoolExpr* bool_expr;
     NodeScope* scope;
+};
+
+struct NodeRepeatTimes {
+    NodeExpr* expr;
+    NodeScope* scope;
+};
+
+struct NodeWhile {
+    std::variant<NodeRepeatTimes*, NodeRepeatWhile*> loop;
 };
 
 struct NodeIf {

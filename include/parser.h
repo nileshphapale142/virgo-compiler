@@ -23,6 +23,8 @@ private:
     std::optional<NodeIncrement*> parse_increment();
     std::optional<NodeDecrement*> parse_decrement();
     std::optional<NodeWhile*> parse_while();
+    std::optional<NodeRepeatWhile*> parse_repeat_while();
+    std::optional<NodeRepeatTimes*> parse_repeat_times();
     std::optional<NodeScope*> parse_scope();
     std::optional<NodeCondition*> parse_condition();
     std::optional<NodeIf*> parse_if();
@@ -36,5 +38,6 @@ private:
     std::optional<Token> consume();
     static void throw_error(const std::string& msg);
     void throw_error_if_not(TokenType expected_token_type);
+    bool check_if(TokenType expected_token_type);
 
 };

@@ -184,32 +184,61 @@ std::optional<NodeWhile* > Parser::parse_while() {
 
 	consume();
 
-	throw_error_if_not(TokenType::WHILE);
+	auto repeat_node = allocator->allocate<NodeWhile>();
+
+	if (const auto while_node = parse_repeat_while()) {
+		repeat_node->loop = while_node.value();
+	} else if (const auto times_node = parse_repeat_times()) {
+		repeat_node->loop = times_node.value();
+	} else {
+		throw_error("Unexpected repeat syntax");
+	}
+
+	throw_error_if_not(TokenType::END);
+	consume();
+
+	throw_error_if_not(TokenType::REPEAT);
+	consume();
+
+	return repeat_node;
+}
+
+std::optional<NodeRepeatWhile*> Parser::parse_repeat_while() {
+	if (!check_if(TokenType::WHILE)) return std::nullopt;
 
 	consume();
 
-	auto while_node = allocator->allocate<NodeWhile>();
+	auto while_node = allocator->allocate<NodeRepeatWhile>();
 	while_node->bool_expr = parse_bool_expr();
 
 	throw_error_if_not(TokenType::DO);
-
 	consume();
 
 	if (const auto scope = parse_scope()) {
 		while_node->scope = scope.value();
 	}
 
-	throw_error_if_not(TokenType::END);
-
-	consume();
-
-	throw_error_if_not(TokenType::REPEAT);
-
-	consume();
-
 	return while_node;
 }
 
+std::optional<NodeRepeatTimes*> Parser::parse_repeat_times() {
+	const auto expr = parse_expr();
+
+	throw_error_if_not(TokenType::TIMES);
+	consume();
+
+	throw_error_if_not(TokenType::DO);
+	consume();
+
+	auto times_node = allocator->allocate<NodeRepeatTimes>();
+	times_node->expr = expr;
+
+	if (const auto scope = parse_scope()) {
+		times_node->scope = scope.value();
+	}
+
+	return times_node;
+}
 
 std::optional<NodeScope*> Parser::parse_scope() {
 	if (!peek().has_value()) return std::nullopt;
@@ -248,7 +277,6 @@ std::optional<NodeCondition*> Parser::parse_condition() {
 	}
 
 	throw_error_if_not(TokenType::END);
-
 	consume();
 
 	throw_error_if_not(TokenType::CHECK);
@@ -262,7 +290,6 @@ std::optional<NodeIf*> Parser::parse_if() {
 	consume();
 
 	throw_error_if_not(TokenType::IF);
-
 	consume();
 
 	auto if_node = allocator->allocate<NodeIf>();
@@ -500,7 +527,7 @@ void Parser::throw_error(const std::string& msg) {
 	exit(EXIT_FAILURE);
 }
 
-void Parser::throw_error_if_not(TokenType expected_token_type) {
+void Parser::throw_error_if_not(const TokenType expected_token_type) {
 	if (!peek().has_value() || peek().value().type != expected_token_type) {
 		switch (expected_token_type) {
 			case TokenType::IDENTIFIER:
@@ -514,6 +541,9 @@ void Parser::throw_error_if_not(TokenType expected_token_type) {
 			break;
 			case TokenType::WHILE:
 				throw_error("Expected \"while\"");
+			break;
+			case TokenType::TIMES:
+				throw_error("Expected \"times\"");
 			break;
 			case TokenType::DO:
 				throw_error("Expected \"do\"");
@@ -543,4 +573,8 @@ void Parser::throw_error_if_not(TokenType expected_token_type) {
 				throw_error("Unexpected token");
 		}
     }
+}
+
+bool Parser::check_if(const TokenType expected_token_type) {
+	return peek().has_value() && peek().value().type == expected_token_type;
 }

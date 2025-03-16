@@ -5,11 +5,60 @@ section .text
 _start:
 	mov rax, 0
 	mov rbx, 1
-	mov rcx, 5
+	mov rcx, 4
+	imul rbx, rcx
+	add rax, rbx
+	push rax
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, 3
+	imul rbx, rcx
+	add rax, rbx
+	push rax
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, [rsp + 8]
+	imul rbx, rcx
+	add rax, rbx
+	push rax
+times_start_1:
+	pop rax
+	cmp rax, 0
+	jle times_end_1
+	dec rax
+	push rax
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, [rsp + 16]
 	imul rbx, rcx
 	add rax, rbx
 	mov rbx, 1
-	mov rcx, 10
+	mov rcx, 1
+	imul rbx, rcx
+	add rax, rbx
+	mov [rsp + 16], rax
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, [rsp + 16]
+	imul rbx, rcx
+	add rax, rbx
+	lea rdi, [print_str + 19]
+	mov r8, rdi
+	call itoa
+	mov rdx, r8
+	sub rdx, rdi
+	inc rdx
+	mov byte [r8 + 1], 10
+	inc rdx
+	mov rax, 1
+	mov rsi, rdi
+	mov rdi, 1
+	syscall
+	jmp times_start_1
+times_end_1:
+	mov rax, 0
+	mov rbx, 1
+	mov rcx, [rsp + 8]
 	imul rbx, rcx
 	add rax, rbx
 	lea rdi, [print_str + 19]

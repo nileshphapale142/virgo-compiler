@@ -64,7 +64,7 @@ void CodeGenerator::handle_stmt(const NodeStmt *stmt) {
 	} else if (std::holds_alternative<NodeDecrement*>(stmt->stmt)) {
 		handle_decrement(std::get<NodeDecrement*>(stmt->stmt));
 	} else if (std::holds_alternative<NodeWhile*>(stmt->stmt)) {
-		handle_while(std::get<NodeWhile*>(stmt->stmt));
+		handle_repeat(std::get<NodeWhile*>(stmt->stmt));
 	} else {
 		std::cerr << "Unknown statement type" << std::endl;
 		exit(EXIT_FAILURE);
@@ -91,7 +91,7 @@ void CodeGenerator::handle_scope(const NodeScope *scope) {
 		} else if (std::holds_alternative<NodeDecrement*>(stmt->stmt)) {
 			handle_decrement(std::get<NodeDecrement*>(stmt->stmt));
 		} else if (std::holds_alternative<NodeWhile*>(stmt->stmt)) {
-			handle_while(std::get<NodeWhile*>(stmt->stmt));
+			handle_repeat(std::get<NodeWhile*>(stmt->stmt));
 		} else {
 			std::cerr << "Unknown statement type" << std::endl;
 			exit(EXIT_FAILURE);
@@ -107,19 +107,58 @@ void CodeGenerator::handle_scope(const NodeScope *scope) {
 }
 
 
-void CodeGenerator::handle_while(const NodeWhile *while_node) {
-	while_cnt ++;
+void CodeGenerator::handle_repeat(const NodeWhile *repeat_node) {
+	repeat_cnt ++;
 
-	const std::string while_end = "while_end_" + std::to_string(while_cnt);
-	const std::string while_start = "while_start_" + std::to_string(while_cnt);
+	if (std::holds_alternative<NodeRepeatWhile*>(repeat_node->loop)) {
+		handle_repeat_while(std::get<NodeRepeatWhile*>(repeat_node->loop));
+	} else if (std::holds_alternative<NodeRepeatTimes*>(repeat_node->loop)) {
+		handle_repeat_times(std::get<NodeRepeatTimes*>(repeat_node->loop));
+	} else {
+		std::cerr << "Unknown loop type" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+}
+
+void CodeGenerator::handle_repeat_while(const NodeRepeatWhile *repeat_while_node) {
+
+	const std::string while_end = "while_end_" + std::to_string(repeat_cnt);
+	const std::string while_start = "while_start_" + std::to_string(repeat_cnt);
 
 	output_code.start << while_start << ":\n";
-	handle_bool_expr(while_node->bool_expr, while_end);
+	handle_bool_expr(repeat_while_node->bool_expr, while_end);
 
-	handle_scope(while_node->scope);
+	handle_scope(repeat_while_node->scope);
 	output_code.start << "	jmp " << while_start << "\n";
 	output_code.start << while_end << ":\n";
 }
+
+void CodeGenerator::handle_repeat_times(const NodeRepeatTimes *repeat_times_node) {
+
+	const std::string times_end = "times_end_" + std::to_string(repeat_cnt);
+	const std::string times_start = "times_start_" + std::to_string(repeat_cnt);
+
+	handle_expr(repeat_times_node->expr);
+
+	vars.push_back("111"); // temporary variable added for stack offset calculation
+
+	output_code.start << "	push rax" << "\n";
+	output_code.start << times_start << ":\n";
+	output_code.start << "	pop rax\n";
+	output_code.start << "	cmp rax, 0\n";
+	output_code.start << "	jle " << times_end << "\n";
+	output_code.start << "	dec rax\n";
+	output_code.start << "	push rax\n";
+
+	handle_scope(repeat_times_node->scope);
+
+	output_code.start << "	jmp " << times_start << "\n";
+	output_code.start << times_end << ":\n";
+
+	vars.pop_back(); // temporary variable removed as no need
+
+}
+
 
 void CodeGenerator::handle_condition(const NodeCondition* condition) {
 	++if_stmt_cnt;
@@ -343,7 +382,7 @@ void CodeGenerator::handle_expr(const NodeExpr *expr) {
 
 		} else if (std::holds_alternative<Token>(val)) {
 			auto token = std::get<Token>(val);
-			
+
 			if (token.type != TokenType::PLUS && token.type != TokenType::MINUS) {
 				std::cerr << "Unexpected token" << std::endl;
 				exit(EXIT_FAILURE);
@@ -421,7 +460,6 @@ void CodeGenerator::handle_factor(const NodeFactor *factor) {
 
 
 void CodeGenerator::add_exit_code() {
-	// output_code.start << "exit:\n";
 	output_code.start << "	mov rax, 60\n";
 	output_code.start << "	xor rdi, rdi\n";
 	output_code.start << "	syscall\n";
