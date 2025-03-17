@@ -4,7 +4,7 @@ Work in progress:
 **For loop**
 
 ## Grammar
-
+![alt text](image.png)
 $$
 
 \begin{array}{rcl}
