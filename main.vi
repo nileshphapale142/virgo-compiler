@@ -1,0 +1,19 @@
+create num as 5
+create half as 5 / 2
+
+repeat for i from 1 to num by 2 do
+    repeat for j from i to half do
+        show 1
+    end repeat
+
+    repeat for j from 1 to i do
+        show 0
+    end repeat
+
+    repeat for j from i to half do
+        show 1
+    end repeat
+
+    showline -1
+
+end repeat

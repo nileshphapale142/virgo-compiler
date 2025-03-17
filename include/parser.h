@@ -25,6 +25,7 @@ private:
     std::optional<NodeWhile*> parse_while();
     std::optional<NodeRepeatWhile*> parse_repeat_while();
     std::optional<NodeRepeatTimes*> parse_repeat_times();
+    std::optional<NodeRepeatFor*> parse_repeat_for();
     std::optional<NodeScope*> parse_scope();
     std::optional<NodeCondition*> parse_condition();
     std::optional<NodeIf*> parse_if();

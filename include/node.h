@@ -40,8 +40,16 @@ struct NodeRepeatTimes {
     NodeScope* scope;
 };
 
+struct NodeRepeatFor {
+    NodeIdentifier* identifier;
+    NodeExpr* start;
+    NodeExpr* end;
+    std::optional<NodeExpr*> by;
+    NodeScope* scope;
+};
+
 struct NodeWhile {
-    std::variant<NodeRepeatTimes*, NodeRepeatWhile*> loop;
+    std::variant<NodeRepeatTimes*, NodeRepeatWhile*, NodeRepeatFor*> loop;
 };
 
 struct NodeIf {

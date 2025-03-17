@@ -1,7 +1,7 @@
  # Virgo Compiler
 
 Work in progress:
-**Loop with x times**
+**For loop**
 
 ## Grammar
 
@@ -15,7 +15,7 @@ $$
     \langle println \rangle & ::= & \texttt{"showline "} \langle expr \rangle\\
     \langle declaration \rangle & ::= & \texttt{"create "} \langle identifier \rangle \texttt{" as "} \langle expr \rangle   \\
     \langle assignment \rangle  &::= & \texttt{"set "}  \langle identifier \rangle  \texttt{" to "}  \langle expr \rangle\\
-    \langle while-loop \rangle & ::= & \texttt{"repeat "} \space (\space \texttt{"while "} \langle condition \rangle \space | \space \langle expr \rangle \texttt{" times"} \space ) \space \texttt{" do "} \newline & & \langle scope \rangle \newline & & \texttt{"end repeat"} \\
+    \langle while-loop \rangle & ::= & \texttt{"repeat "} \space (\space \texttt{"while "} \langle condition \rangle \space | \space \langle expr \rangle \texttt{" times"} \space | \space \texttt{"for "} \langle identifier \rangle  \texttt{" from "} \langle expr \rangle \texttt{" to "} \langle expr \rangle \space [\space \texttt{" by "} \langle expr \rangle \space]\space) \space \texttt{" do "} \newline & & \langle scope \rangle \newline & & \texttt{"end repeat"} \\
     \langle condition \rangle & ::= & \langle if \rangle \space ( \space \epsilon \space | \space \langle elif-chain \rangle \space ) \space ( \space \epsilon \space | \space \langle else \rangle  \space ) \newline & & \texttt{"end check"}\\
     \langle if \rangle & ::= & \texttt{"check if "} \langle bool\_expr \rangle  \texttt{" then "} \langle scope \rangle\\
     \langle elif-chain \rangle & ::= & \langle elif \rangle \langle elif-chain \rangle \\

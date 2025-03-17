@@ -28,6 +28,7 @@ class CodeGenerator {
 		void handle_repeat(const NodeWhile *repeat_node);
 		void handle_repeat_while(const NodeRepeatWhile *repeat_while_node);
 		void handle_repeat_times(const NodeRepeatTimes *repeat_times_node);
+		void handle_repeat_for(const NodeRepeatFor *repeat_for_node);
 		void handle_scope(const NodeScope *scope);
 		void handle_condition(const NodeCondition *condition);
 		void handle_if(const NodeIf *if_node, int cond_cnt);

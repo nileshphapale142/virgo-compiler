@@ -114,6 +114,8 @@ void CodeGenerator::handle_repeat(const NodeWhile *repeat_node) {
 		handle_repeat_while(std::get<NodeRepeatWhile*>(repeat_node->loop));
 	} else if (std::holds_alternative<NodeRepeatTimes*>(repeat_node->loop)) {
 		handle_repeat_times(std::get<NodeRepeatTimes*>(repeat_node->loop));
+	} else if (std::holds_alternative<NodeRepeatFor*>(repeat_node->loop)) {
+		handle_repeat_for(std::get<NodeRepeatFor*>(repeat_node->loop));
 	} else {
 		std::cerr << "Unknown loop type" << std::endl;
 		exit(EXIT_FAILURE);
@@ -131,6 +133,74 @@ void CodeGenerator::handle_repeat_while(const NodeRepeatWhile *repeat_while_node
 	handle_scope(repeat_while_node->scope);
 	output_code.start << "	jmp " << while_start << "\n";
 	output_code.start << while_end << ":\n";
+}
+
+void CodeGenerator::handle_repeat_for(const NodeRepeatFor *repeat_for_node) {
+	const std::string for_end = "for_end_" + std::to_string(repeat_cnt);
+	const std::string for_start = "for_start_" + std::to_string(repeat_cnt);
+
+	handle_expr(repeat_for_node->start);
+	output_code.start << "	push rax\n";
+
+	vars.emplace_back(repeat_for_node->identifier->name.value.value());
+
+	output_code.start << for_start << ":\n";
+
+	handle_expr(repeat_for_node->end);
+
+	if (repeat_for_node->by.has_value()) {
+		output_code.start << "	push rax\n"; //end
+
+		handle_expr(repeat_for_node->by.value());
+
+		output_code.start << "	push rax\n"; //by
+
+		output_code.start << "	cmp rax, 0\n";
+		output_code.start << "	jl for_check_dec_" << std::to_string(repeat_cnt) << "\n";
+		output_code.start << "	pop rcx\n"; //by
+		output_code.start << "	pop rbx\n"; //end
+		output_code.start << "	pop rax\n"; //start
+		output_code.start << "	cmp rax, rbx\n";
+		output_code.start << "	jg " << for_end << "\n";
+		output_code.start << "	push rax\n";
+		output_code.start << "	push rcx\n";
+		output_code.start << "	jmp for_check_end_" + std::to_string(repeat_cnt) + "\n";
+		output_code.start << "for_check_dec_" << std::to_string(repeat_cnt) << ":\n";
+		output_code.start << "	pop rcx\n"; //by
+		output_code.start << "	pop rbx\n"; //end
+		output_code.start << "	pop rax\n"; //start
+		output_code.start << "	cmp rax, rbx\n";
+		output_code.start << "	jl " << for_end << "\n";
+		output_code.start << "	push rax\n"; //start
+		output_code.start << "	push rcx\n";//by
+		output_code.start << "for_check_end_" + std::to_string(repeat_cnt) + ":\n";
+
+		vars.emplace_back("1for_check_by_" + std::to_string(repeat_cnt));
+	} else {
+		output_code.start << "	mov rbx, rax\n";
+		output_code.start << "	pop rax\n";
+		output_code.start << "	cmp rax, rbx\n";
+		output_code.start << "	jg " << for_end << "\n";
+		output_code.start << "	push rax\n";
+	}
+
+	handle_scope(repeat_for_node->scope);
+
+	if (repeat_for_node->by.has_value()) {
+		output_code.start << "	pop rbx\n"; //by
+		output_code.start << "	pop rax\n"; //start
+		output_code.start << "	add rax, rbx\n";
+		output_code.start << "	push rax\n"; //start
+
+		vars.pop_back();
+	} else {
+		output_code.start << "	inc qword [rsp]\n";
+	}
+
+	output_code.start << "	jmp " + for_start + "\n";
+	output_code.start << for_end << ":\n";
+
+	vars.pop_back();
 }
 
 void CodeGenerator::handle_repeat_times(const NodeRepeatTimes *repeat_times_node) {

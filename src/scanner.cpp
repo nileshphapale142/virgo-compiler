@@ -195,6 +195,12 @@ std::vector<Token> Scanner::scan() {
                         tokens.push_back(Token({.type = TokenType::OR}));
                     } else if (token == "times") {
                         tokens.push_back(Token({.type = TokenType::TIMES}));
+                    } else if (token == "for") {
+                        tokens.push_back(Token({.type = TokenType::FOR}));
+                    } else if (token == "from") {
+                        tokens.push_back(Token({.type = TokenType::FROM}));
+                    } else if (token == "by") {
+                        tokens.push_back(Token({.type = TokenType::BY}));
                     } else if (token == "note") {
 
                         if (!peek().has_value()) {

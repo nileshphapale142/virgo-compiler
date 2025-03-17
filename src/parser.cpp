@@ -188,6 +188,8 @@ std::optional<NodeWhile* > Parser::parse_while() {
 
 	if (const auto while_node = parse_repeat_while()) {
 		repeat_node->loop = while_node.value();
+	} else if (const auto for_node = parse_repeat_for()) {
+		repeat_node->loop = for_node.value();
 	} else if (const auto times_node = parse_repeat_times()) {
 		repeat_node->loop = times_node.value();
 	} else {
@@ -219,6 +221,46 @@ std::optional<NodeRepeatWhile*> Parser::parse_repeat_while() {
 	}
 
 	return while_node;
+}
+
+std::optional<NodeRepeatFor*> Parser::parse_repeat_for() {
+	if (!check_if(TokenType::FOR)) return std::nullopt;
+
+	consume();
+
+	throw_error_if_not(TokenType::IDENTIFIER);
+
+	auto for_node = allocator->allocate<NodeRepeatFor>();
+
+	const auto identifier = allocator->allocate<NodeIdentifier>();
+	identifier->name = consume().value();
+
+	for_node->identifier = identifier;
+
+	throw_error_if_not(TokenType::FROM);
+	consume();
+
+	for_node->start = parse_expr();
+
+	throw_error_if_not(TokenType::TO);
+	consume();
+
+	for_node->end = parse_expr();
+
+	if (check_if(TokenType::BY)) {
+		consume();
+
+		for_node->by = parse_expr();
+	}
+
+	throw_error_if_not(TokenType::DO);
+	consume();
+
+	if (const auto scope = parse_scope()) {
+		for_node->scope = scope.value();
+	}
+
+	return for_node;
 }
 
 std::optional<NodeRepeatTimes*> Parser::parse_repeat_times() {
@@ -568,6 +610,12 @@ void Parser::throw_error_if_not(const TokenType expected_token_type) {
 			break;
 			case TokenType::THAN:
 				throw_error("Expected \"than\" after less/greater");
+			break;
+			case TokenType::FOR:
+				throw_error("Expected \"for\"");
+			break;
+			case TokenType::FROM:
+				throw_error("Expected \"from\"");
 			break;
 			default:
 				throw_error("Unexpected token");
