@@ -18,6 +18,7 @@ private:
     NodeStmtList* parse_stmt_list();
     std::optional<NodeStmt*> parse_stmt();
     std::optional<NodePrint*> parse_print();
+    std::optional<NodeEndline*> parse_endline();
     std::optional<NodeDeclaration*> parse_declaration();
     std::optional<NodeAssignment*> parse_assignment();
     std::optional<NodeIncrement*> parse_increment();

@@ -18,7 +18,7 @@ enum class TokenType {
     // Keywords
     SHOW, SHOWLINE, CREATE, AS, SET, TO, REPEAT, WHILE, DO, END,
     CHECK, IF, THEN, OTHERWISE, EQUALS, NOT, LESS, THAN, GREATER,
-    OR, TIMES, FOR, FROM, BY
+    OR, TIMES, FOR, FROM, BY, ENDLINE
 };
 
 struct Token {

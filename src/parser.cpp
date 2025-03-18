@@ -40,6 +40,11 @@ std::optional<NodeStmt*> Parser::parse_stmt() {
 		return stmt;
 	}
 
+	if (auto endl_stmt = parse_endline()) {
+		stmt->stmt = endl_stmt.value();
+		return stmt;
+	}
+
 	if (auto decl_stmt = parse_declaration()) {
 		stmt->stmt = decl_stmt.value();
 		return stmt;
@@ -71,6 +76,8 @@ std::optional<NodeStmt*> Parser::parse_stmt() {
 		return stmt;
 	}
 
+
+
 	return std::nullopt;
 };
 
@@ -90,6 +97,16 @@ std::optional<NodePrint*> Parser::parse_print() {
 	print_node->expr = parse_expr();
 
 	return  print_node;
+}
+
+std::optional<NodeEndline*> Parser::parse_endline() {
+	if (!check_if(TokenType::ENDLINE)) return std::nullopt;
+
+	consume();
+
+	auto* endline_node = allocator->allocate<NodeEndline>();
+
+	return endline_node;
 }
 
 std::optional<NodeDeclaration *> Parser::parse_declaration() {

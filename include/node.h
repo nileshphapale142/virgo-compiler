@@ -41,11 +41,11 @@ struct NodeRepeatTimes {
 };
 
 struct NodeRepeatFor {
-    NodeIdentifier* identifier;
-    NodeExpr* start;
-    NodeExpr* end;
+    NodeIdentifier* identifier{};
+    NodeExpr* start{};
+    NodeExpr* end{};
     std::optional<NodeExpr*> by;
-    NodeScope* scope;
+    NodeScope* scope{};
 };
 
 struct NodeWhile {
@@ -77,6 +77,11 @@ struct NodePrint {
     bool is_println;
 };
 
+struct NodeEndline {
+
+};
+
+
 struct NodeDeclaration {
     NodeIdentifier* ident;
     NodeExpr* expr;
@@ -99,7 +104,7 @@ struct NodeDecrement {
 struct NodeStmt {
     std::variant<NodePrint*, NodeDeclaration*, NodeAssignment*,
     NodeScope*, NodeCondition*, NodeIncrement*, NodeDecrement*,
-    NodeWhile*> stmt;
+    NodeWhile*, NodeEndline*> stmt;
 };
 
 struct NodeStmtList {

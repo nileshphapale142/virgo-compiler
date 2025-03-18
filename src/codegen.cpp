@@ -8,9 +8,9 @@ CodeGenerator::CodeGenerator(NodeProgram* root)
 
 std::string CodeGenerator::generate() {
 
-	// collect_section_data(root.stmt_list);
-	
 	collect_section_bss(root->stmt_list);
+	collect_section_data(root->stmt_list);
+
 
 	output_code.text << "section .text\n";
 	output_code.text << "	global _start\n";
@@ -32,12 +32,24 @@ std::string CodeGenerator::generate() {
 
 
 void CodeGenerator::collect_section_data(const NodeStmtList *stmt_list) {
-	label_cnt = 0;
+	for (const auto stmt : stmt_list->stmts) {
+		if (std::holds_alternative<NodeEndline*>(stmt->stmt)) {
+			output_code.data << "section .data\n";
+			output_code.data << "	newline db 10\n";
+			break;
+		}
+	}
 }
 
 void CodeGenerator::collect_section_bss(const NodeStmtList *stmt_list) {
-	output_code.bss << "section .bss\n";
-	output_code.bss << "	print_str resb 20\n";
+
+	for (const auto stmt : stmt_list->stmts) {
+		if (std::holds_alternative<NodePrint*>(stmt->stmt)) {
+			output_code.bss << "section .bss\n";
+			output_code.bss << "	print_str resb 20\n";
+			break;
+		}
+	}
 }
 
 
@@ -65,6 +77,8 @@ void CodeGenerator::handle_stmt(const NodeStmt *stmt) {
 		handle_decrement(std::get<NodeDecrement*>(stmt->stmt));
 	} else if (std::holds_alternative<NodeWhile*>(stmt->stmt)) {
 		handle_repeat(std::get<NodeWhile*>(stmt->stmt));
+	} else if (std::holds_alternative<NodeEndline*>(stmt->stmt)) {
+		handle_endline(std::get<NodeEndline*>(stmt->stmt));
 	} else {
 		std::cerr << "Unknown statement type" << std::endl;
 		exit(EXIT_FAILURE);
@@ -92,6 +106,8 @@ void CodeGenerator::handle_scope(const NodeScope *scope) {
 			handle_decrement(std::get<NodeDecrement*>(stmt->stmt));
 		} else if (std::holds_alternative<NodeWhile*>(stmt->stmt)) {
 			handle_repeat(std::get<NodeWhile*>(stmt->stmt));
+		} else if (std::holds_alternative<NodeEndline*>(stmt->stmt)) {
+			handle_endline(std::get<NodeEndline*>(stmt->stmt));
 		} else {
 			std::cerr << "Unknown statement type" << std::endl;
 			exit(EXIT_FAILURE);
@@ -369,6 +385,15 @@ void CodeGenerator::handle_print(const NodePrint *node) {
 		output_code.procs << "	ret\n";
 	}
 }
+
+void CodeGenerator::handle_endline(const NodeEndline *node) {
+	output_code.start << "	mov rax, 1\n";
+	output_code.start << "	mov rdi, 1\n";
+	output_code.start << "	lea rsi, [newline]\n";
+	output_code.start << "	mov rdx, 1\n";
+	output_code.start << "	syscall\n";
+}
+
 
 void CodeGenerator::handle_declaration(const NodeDeclaration *decl) {
 	const auto itr = std::ranges::find_if(vars.begin(), vars.end(), [&](const std::string& var) {

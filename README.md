@@ -1,18 +1,18 @@
  # Virgo Compiler
 
 Work in progress:
-**For loop**
+**Endline**
 
 ## Grammar
-![alt text](image.png)
 $$
 
 \begin{array}{rcl}
     \langle program \rangle & ::= & \langle stmt-list \rangle \\
     \langle stmt-list \rangle & ::= & \epsilon \space | \space \langle stmt \rangle \space  | \space \langle stmt-list \rangle \space \langle stmt \rangle \\
-    \langle stmt \rangle & ::= & \langle print \rangle  \space | \space \langle println \rangle \space | \space \langle declaration \rangle \space | \space \langle assignment \rangle \space | \space \langle condition \rangle \space | \space \langle comment \rangle \space | \space \langle while-loop \rangle\\
+    \langle stmt \rangle & ::= & \langle print \rangle  \space | \space \langle println \rangle \space | \space \langle declaration \rangle \space | \space \langle assignment \rangle \space | \space \langle condition \rangle \space | \space \langle comment \rangle \space | \space \langle while-loop \rangle \space | \space \langle endline \rangle \\
     \langle print \rangle & ::= & \texttt{"show "}  \langle expr \rangle \\
     \langle println \rangle & ::= & \texttt{"showline "} \langle expr \rangle\\
+    \langle endline \rangle & ::= & \texttt{"endline"}\\
     \langle declaration \rangle & ::= & \texttt{"create "} \langle identifier \rangle \texttt{" as "} \langle expr \rangle   \\
     \langle assignment \rangle  &::= & \texttt{"set "}  \langle identifier \rangle  \texttt{" to "}  \langle expr \rangle\\
     \langle while-loop \rangle & ::= & \texttt{"repeat "} \space (\space \texttt{"while "} \langle condition \rangle \space | \space \langle expr \rangle \texttt{" times"} \space | \space \texttt{"for "} \langle identifier \rangle  \texttt{" from "} \langle expr \rangle \texttt{" to "} \langle expr \rangle \space [\space \texttt{" by "} \langle expr \rangle \space]\space) \space \texttt{" do "} \newline & & \langle scope \rangle \newline & & \texttt{"end repeat"} \\

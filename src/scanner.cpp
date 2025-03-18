@@ -201,6 +201,8 @@ std::vector<Token> Scanner::scan() {
                         tokens.push_back(Token({.type = TokenType::FROM}));
                     } else if (token == "by") {
                         tokens.push_back(Token({.type = TokenType::BY}));
+                    } else if (token == "endline") {
+                        tokens.push_back(Token({.type = TokenType::ENDLINE}));
                     } else if (token == "note") {
 
                         if (!peek().has_value()) {
